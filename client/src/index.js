@@ -1,12 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter as Router } from 'react-router-dom'
-import './index.css'
+import { StyledEngineProvider } from '@mui/material/styles'
 import App from './App'
 
 ReactDOM.render(
   <Router>
-    <App />
+    <StyledEngineProvider injectFirst>
+      <App />
+    </StyledEngineProvider>
   </Router>,
   document.getElementById('root'),
 )
