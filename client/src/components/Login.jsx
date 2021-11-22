@@ -16,16 +16,21 @@ const Login = () => {
           <form>
             <Stack alignItems="center" spacing={3}>
               <TextField
+                required
                 sx={{ width: '75%' }}
                 id="username"
                 label="Username"
                 variant="outlined"
+                //error={true}
+                type="text"
               />
               <TextField
+                required
                 sx={{ width: '75%' }}
                 id="password"
                 label="Password"
                 variant="outlined"
+                type="password"
               />
               <Button sx={{ width: '50%' }} variant="contained">
                 Log in
