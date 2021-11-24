@@ -4,9 +4,23 @@ const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const cors = require('cors')
+const mongoose = require('mongoose')
 
 const testAPIRouter = require('./routes/testAPI')
 const app = express()
+
+mongoose.connect(process.env.DB_URL, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+})
+const db = mongoose.connection
+
+db.on('error', error => {
+  console.log(error)
+})
+db.on('open', () => {
+  console.log('Connected to database')
+})
 
 app.use(logger('dev'))
 app.use(express.json())
