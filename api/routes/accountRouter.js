@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     const accounts = await Account.find()
     res.send({ accounts: accounts })
   } catch (error) {
-    res.status(500).send({ error: error.message })
+    res.status(500).send({ message: error.message })
   }
 })
 
@@ -21,7 +21,7 @@ router.get('/:id', async (req, res) => {
     const account = await Account.findById(req.params.id)
     res.send({ account: account })
   } catch (error) {
-    res.status(500).send({ error: message })
+    res.status(500).send({ message: error.message })
   }
 })
 
@@ -54,7 +54,18 @@ router.post('/', async (req, res) => {
       })
     }
   } catch (error) {
-    res.status(500).send({ error: error.message })
+    res.status(500).send({ message: error.message })
+  }
+})
+
+/**Delete by id */
+router.delete('/:id', async (req, res) => {
+  try {
+    const account = await Account.findById(req.params.id)
+    await account.remove()
+    res.send({ message: 'Account deleted' })
+  } catch (error) {
+    res.status(500).send({ message: error.message })
   }
 })
 
