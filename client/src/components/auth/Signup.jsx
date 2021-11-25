@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Paper, TextField, Button, Stack, Typography } from '@mui/material'
 import LoginIcon from '@mui/icons-material/Login'
 import MusicNoteIcon from '@mui/icons-material/MusicNote'
@@ -10,6 +11,8 @@ import {
 } from './validation'
 
 const Signup = props => {
+  let navigate = useNavigate()
+
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -34,7 +37,8 @@ const Signup = props => {
 
   const handleSubmit = () => {
     if (validateInput()) {
-      console.log('Save to API & redirect')
+      console.log('Save to API')
+      navigate('/timeline')
     }
   }
 

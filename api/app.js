@@ -5,9 +5,9 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const cors = require('cors')
 const mongoose = require('mongoose')
-
-const testAPIRouter = require('./routes/testAPI')
+const accountRouter = require('./routes/accountRouter')
 const app = express()
+require('dotenv').config()
 
 mongoose.connect(process.env.DB_URL, {
   useUnifiedTopology: true,
@@ -29,7 +29,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(cors())
 
-app.use('/testAPI', testAPIRouter)
+app.use('/accounts', accountRouter)
 
 app.use((req, res, next) => {
   next(createError(404))

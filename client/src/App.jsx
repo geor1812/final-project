@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import styled from 'styled-components'
 
+import styled from 'styled-components'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 import theme from './theme'
 
