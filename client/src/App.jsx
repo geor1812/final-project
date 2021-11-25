@@ -6,18 +6,20 @@ import { ThemeProvider, CssBaseline } from '@mui/material'
 import theme from './theme'
 
 import Home from './components/Home'
-import Dashboard from './components/Dashboard'
-import Login from './components/Login'
+import Timeline from './components/Timeline'
+import Auth from './components/auth/Auth'
 
 const App = () => {
+  //const [token, setToken] = useState()
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Wrapper>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
+          <Route exact path="/" element={<Home />} />
+          <Route exact path="/timeline" element={<Timeline />} />
+          <Route path="/auth" element={<Auth />} />
         </Routes>
       </Wrapper>
     </ThemeProvider>

@@ -1,11 +1,17 @@
 import { createTheme } from '@mui/material'
-import { orange } from '@mui/material/colors'
 
 const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: orange[500],
+      main: '#e58e35',
+    },
+    secondary: {
+      main: '#7a98ee',
+    },
+    background: {
+      default: '#200e26',
+      paper: '#461e52',
     },
   },
 })

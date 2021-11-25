@@ -1,23 +1,12 @@
 import React from 'react'
-import {
-  Container,
-  Box,
-  Card,
-  TextField,
-  Button,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Paper, TextField, Button, Stack, Typography } from '@mui/material'
+import LoginIcon from '@mui/icons-material/Login'
+import MusicNoteIcon from '@mui/icons-material/MusicNote'
 
-const Login = () => {
+const Login = props => {
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      minHeight="100vh"
-    >
-      <Card
+    <>
+      <Paper
         sx={{ padding: '20px', pt: '50px', width: '500px', height: '500px' }}
       >
         <form>
@@ -42,13 +31,28 @@ const Login = () => {
               variant="outlined"
               type="password"
             />
-            <Button sx={{ width: '50%' }} variant="contained">
+            <Button
+              sx={{ width: '50%' }}
+              variant="contained"
+              endIcon={<LoginIcon />}
+            >
               Log in
             </Button>
           </Stack>
         </form>
-      </Card>
-    </Box>
+      </Paper>
+      <Button
+        sx={{ height: '75px' }}
+        variant="contained"
+        color="secondary"
+        startIcon={<MusicNoteIcon />}
+        onClick={() => {
+          props.isSignup(true)
+        }}
+      >
+        Sign Up
+      </Button>
+    </>
   )
 }
 
