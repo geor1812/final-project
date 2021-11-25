@@ -1,11 +1,24 @@
 import React, { useState } from 'react'
-import { Box } from '@mui/material'
+import { Box, Alert, Container } from '@mui/material'
 import Login from './Login'
 import Signup from './Signup'
 const Auth = props => {
   const [signup, isSignup] = useState(props.signup)
+  const [alert, setAlert] = useState(null)
   return (
-    <>
+    <Container>
+      {alert ? (
+        <Box justifyContent="center" display="flex">
+          <Alert
+            sx={{ width: '100%' }}
+            variant="filled"
+            severity={alert.severity}
+          >
+            {alert.message}
+          </Alert>
+        </Box>
+      ) : null}
+
       <Box
         display="flex"
         justifyContent="center"
@@ -13,12 +26,12 @@ const Auth = props => {
         minHeight="100vh"
       >
         {signup ? (
-          <Signup isSignup={isSignup} />
+          <Signup setAlert={setAlert} isSignup={isSignup} />
         ) : (
           <Login isSignup={isSignup} />
         )}
       </Box>
-    </>
+    </Container>
   )
 }
 

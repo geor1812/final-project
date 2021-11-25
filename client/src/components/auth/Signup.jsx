@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import { Paper, TextField, Button, Stack, Typography } from '@mui/material'
 import LoginIcon from '@mui/icons-material/Login'
 import MusicNoteIcon from '@mui/icons-material/MusicNote'
@@ -11,6 +12,7 @@ import {
 } from './validation'
 
 const Signup = props => {
+  const { setAlert, isSignup } = props
   let navigate = useNavigate()
 
   const [username, setUsername] = useState('')
@@ -37,9 +39,32 @@ const Signup = props => {
 
   const handleSubmit = () => {
     if (validateInput()) {
-      console.log('Save to API')
-      navigate('/timeline')
+      axios({
+        method: 'post',
+        url: 'http://localhost:9000/accounts/',
+        data: {
+          username: username,
+          email: email,
+          password: password,
+        },
+      })
+        .then(res => {
+          if (res.data.createdAccount) {
+            setAlert({
+              severity: 'success',
+              message: 'Account created successfully! You can now log in.',
+            })
+            isSignup(false)
+          }
+        })
+        .catch(error => {
+          setAlert({
+            severity: 'error',
+            message: error.response.data.message,
+          })
+        })
     }
+    //navigate('/timeline')
   }
 
   return (
@@ -140,7 +165,7 @@ const Signup = props => {
         color="secondary"
         startIcon={<LoginIcon />}
         onClick={() => {
-          props.isSignup(false)
+          isSignup(false)
         }}
       >
         Log in

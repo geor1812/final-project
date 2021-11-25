@@ -14,22 +14,7 @@ const accountSchema = new mongoose.Schema({
   },
   hash: String,
   salt: String,
+  token: String,
 })
-
-accountSchema.methods.setPassword = password => {
-  this.salt = crypto.randomBytes(16).toString('hex')
-  this.hash = crypto
-    .pbkdf2Sync(password, this.salt, 1000, 64, 'sha512')
-    .toString('hex')
-  console.log('setting password')
-  console.log(this.salt, this.hash)
-}
-
-accountSchema.methods.validPassword = password => {
-  const hash = crypto
-    .pbkdf2Sync(password, this.salt, 1000, 64, 'sha512')
-    .toString('hex')
-  return this.hash === hash
-}
 
 module.exports = mongoose.model('Account', accountSchema)
