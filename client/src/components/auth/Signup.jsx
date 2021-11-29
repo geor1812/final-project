@@ -32,10 +32,12 @@ const Signup = props => {
     ) {
       return true
     }
+    console.log(false)
     return false
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = event => {
+    event.preventDefault()
     if (validateInput()) {
       axios({
         method: 'post',
@@ -69,7 +71,7 @@ const Signup = props => {
       <Paper
         sx={{ padding: '20px', pt: '50px', width: '500px', height: '500px' }}
       >
-        <form>
+        <form onSubmit={handleSubmit}>
           <Stack alignItems="center" spacing={2}>
             <Typography variant="h5">SIGN UP</Typography>
             <Typography variant="p">
@@ -148,8 +150,8 @@ const Signup = props => {
             <Button
               sx={{ width: '50%' }}
               variant="contained"
+              type="submit"
               endIcon={<MusicNoteIcon />}
-              onClick={handleSubmit}
             >
               Sign Up
             </Button>

@@ -12,7 +12,8 @@ const Login = props => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleLogin = () => {
+  const handleLogin = event => {
+    event.preventDefault()
     axios({
       method: 'post',
       url: 'http://localhost:9000/auth/',
@@ -40,7 +41,7 @@ const Login = props => {
       <Paper
         sx={{ padding: '20px', pt: '50px', width: '500px', height: '500px' }}
       >
-        <form>
+        <form onSubmit={handleLogin}>
           <Stack alignItems="center" spacing={3}>
             <Typography variant="h5">LOG IN</Typography>
             <Typography variant="p">Welcome to name-goes-here</Typography>
@@ -69,7 +70,7 @@ const Login = props => {
               sx={{ width: '50%' }}
               variant="contained"
               endIcon={<LoginIcon />}
-              onClick={handleLogin}
+              type="submit"
             >
               Log in
             </Button>

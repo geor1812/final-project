@@ -1,5 +1,6 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
+import useToken from './useToken'
 
 import styled from 'styled-components'
 import { ThemeProvider, CssBaseline } from '@mui/material'
@@ -8,7 +9,6 @@ import theme from './theme'
 import Home from './components/Home'
 import Timeline from './components/Timeline'
 import Auth from './components/auth/Auth'
-import useToken from './useToken'
 
 const App = () => {
   //Custom auth token hook
