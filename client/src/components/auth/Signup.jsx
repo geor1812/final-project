@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { Paper, TextField, Button, Stack, Typography } from '@mui/material'
 import LoginIcon from '@mui/icons-material/Login'
@@ -13,7 +12,6 @@ import {
 
 const Signup = props => {
   const { setAlert, isSignup } = props
-  let navigate = useNavigate()
 
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
@@ -64,7 +62,6 @@ const Signup = props => {
           })
         })
     }
-    //navigate('/timeline')
   }
 
   return (

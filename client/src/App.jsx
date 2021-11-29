@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -10,7 +10,7 @@ import Timeline from './components/Timeline'
 import Auth from './components/auth/Auth'
 
 const App = () => {
-  //const [token, setToken] = useState()
+  const [token, setToken] = useState()
 
   return (
     <ThemeProvider theme={theme}>
@@ -18,8 +18,8 @@ const App = () => {
       <Wrapper>
         <Routes>
           <Route exact path="/" element={<Home />} />
-          <Route exact path="/timeline" element={<Timeline />} />
-          <Route path="/auth" element={<Auth />} />
+          <Route exact path="/timeline" element={<Timeline token={token} />} />
+          <Route path="/auth" element={<Auth setToken={setToken} />} />
         </Routes>
       </Wrapper>
     </ThemeProvider>

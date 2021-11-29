@@ -33,7 +33,6 @@ router.post('/', async (req, res) => {
       $or: [{ username: req.body.username }, { email: req.body.email }],
     }).exec()
     if (account.length !== 0) {
-      console.log(account)
       res
         .status(403)
         .send({ message: 'Username or email address is already in use' })
@@ -58,7 +57,7 @@ router.post('/', async (req, res) => {
   }
 })
 
-/**Delete by id */
+/**Delete account by id */
 router.delete('/:id', async (req, res) => {
   try {
     const account = await Account.findById(req.params.id)
