@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 const Timeline = props => {
   const { token } = props
   let navigate = useNavigate()
-
   useEffect(() => {
     if (!token) {
       navigate('/auth')

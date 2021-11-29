@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -8,9 +8,11 @@ import theme from './theme'
 import Home from './components/Home'
 import Timeline from './components/Timeline'
 import Auth from './components/auth/Auth'
+import useToken from './useToken'
 
 const App = () => {
-  const [token, setToken] = useState()
+  //Custom auth token hook
+  const { token, setToken } = useToken()
 
   return (
     <ThemeProvider theme={theme}>
