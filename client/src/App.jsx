@@ -1,7 +1,8 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import styled from 'styled-components'
+import useToken from './useToken'
 
+import styled from 'styled-components'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 import theme from './theme'
 
@@ -11,7 +12,8 @@ import Auth from './components/auth/Auth'
 import Sequencer from './components/sequencer/Sequencer'
 
 const App = () => {
-  //const [token, setToken] = useState()
+  //Custom auth token hook
+  const { token, setToken } = useToken()
 
   return (
     <ThemeProvider theme={theme}>
@@ -19,9 +21,9 @@ const App = () => {
       <Wrapper>
         <Routes>
           <Route exact path="/" element={<Home />} />
-          <Route exact path="/timeline" element={<Timeline />} />
-          <Route path="/auth" element={<Auth />} />
           <Route path="/sequencer" element={<Sequencer />} />
+          <Route exact path="/timeline" element={<Timeline token={token} />} />
+          <Route path="/auth" element={<Auth setToken={setToken} />} />
         </Routes>
       </Wrapper>
     </ThemeProvider>

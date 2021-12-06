@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import axios from 'axios'
 import { Paper, TextField, Button, Stack, Typography } from '@mui/material'
 import LoginIcon from '@mui/icons-material/Login'
 import MusicNoteIcon from '@mui/icons-material/MusicNote'
@@ -10,6 +11,8 @@ import {
 } from './validation'
 
 const Signup = props => {
+  const { setAlert, isSignup } = props
+
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -29,12 +32,37 @@ const Signup = props => {
     ) {
       return true
     }
+    console.log(false)
     return false
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = event => {
+    event.preventDefault()
     if (validateInput()) {
-      console.log('Save to API & redirect')
+      axios({
+        method: 'post',
+        url: 'http://localhost:9000/accounts/',
+        data: {
+          username: username,
+          email: email,
+          password: password,
+        },
+      })
+        .then(res => {
+          if (res.data.createdAccount) {
+            setAlert({
+              severity: 'success',
+              message: 'Account created successfully! You can now log in.',
+            })
+            isSignup(false)
+          }
+        })
+        .catch(error => {
+          setAlert({
+            severity: 'error',
+            message: error.response.data.message,
+          })
+        })
     }
   }
 
@@ -43,7 +71,7 @@ const Signup = props => {
       <Paper
         sx={{ padding: '20px', pt: '50px', width: '500px', height: '500px' }}
       >
-        <form>
+        <form onSubmit={handleSubmit}>
           <Stack alignItems="center" spacing={2}>
             <Typography variant="h5">SIGN UP</Typography>
             <Typography variant="p">
@@ -122,8 +150,8 @@ const Signup = props => {
             <Button
               sx={{ width: '50%' }}
               variant="contained"
+              type="submit"
               endIcon={<MusicNoteIcon />}
-              onClick={handleSubmit}
             >
               Sign Up
             </Button>
@@ -136,7 +164,7 @@ const Signup = props => {
         color="secondary"
         startIcon={<LoginIcon />}
         onClick={() => {
-          props.isSignup(false)
+          isSignup(false)
         }}
       >
         Log in

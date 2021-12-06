@@ -1,15 +1,47 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Paper, TextField, Button, Stack, Typography } from '@mui/material'
 import LoginIcon from '@mui/icons-material/Login'
 import MusicNoteIcon from '@mui/icons-material/MusicNote'
+import axios from 'axios'
 
 const Login = props => {
+  let navigate = useNavigate()
+
+  const { setAlert, isSignup, setToken } = props
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleLogin = event => {
+    event.preventDefault()
+    axios({
+      method: 'post',
+      url: 'http://localhost:9000/auth/',
+      data: {
+        username: username,
+        password: password,
+      },
+    })
+      .then(res => {
+        if (res.data.token) {
+          setToken(res.data.token)
+          navigate('/timeline')
+        }
+      })
+      .catch(error => {
+        setAlert({
+          severity: 'error',
+          message: error.response.data.message,
+        })
+      })
+  }
+
   return (
     <>
       <Paper
         sx={{ padding: '20px', pt: '50px', width: '500px', height: '500px' }}
       >
-        <form>
+        <form onSubmit={handleLogin}>
           <Stack alignItems="center" spacing={3}>
             <Typography variant="h5">LOG IN</Typography>
             <Typography variant="p">Welcome to name-goes-here</Typography>
@@ -19,9 +51,10 @@ const Login = props => {
               id="username"
               label="Username"
               variant="outlined"
-              //error={true}
               type="text"
               autoComplete="off"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
             />
             <TextField
               required
@@ -30,11 +63,14 @@ const Login = props => {
               label="Password"
               variant="outlined"
               type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
             />
             <Button
               sx={{ width: '50%' }}
               variant="contained"
               endIcon={<LoginIcon />}
+              type="submit"
             >
               Log in
             </Button>
@@ -47,7 +83,7 @@ const Login = props => {
         color="secondary"
         startIcon={<MusicNoteIcon />}
         onClick={() => {
-          props.isSignup(true)
+          isSignup(true)
         }}
       >
         Sign Up
