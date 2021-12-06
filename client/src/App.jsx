@@ -8,6 +8,7 @@ import theme from './theme'
 import Home from './components/Home'
 import Timeline from './components/Timeline'
 import Auth from './components/auth/Auth'
+import Sequencer from './components/sequencer/Sequencer'
 
 const App = () => {
   //const [token, setToken] = useState()
@@ -20,6 +21,7 @@ const App = () => {
           <Route exact path="/" element={<Home />} />
           <Route exact path="/timeline" element={<Timeline />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/sequencer" element={<Sequencer />} />
         </Routes>
       </Wrapper>
     </ThemeProvider>
