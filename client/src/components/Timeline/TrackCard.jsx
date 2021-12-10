@@ -10,6 +10,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Divider,
 } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import AddIcon from '@mui/icons-material/Add'
@@ -75,12 +76,13 @@ const TrackCard = ({ track }) => {
         </Box>
         <CardMedia
           component="img"
-          sx={{ width: 150, height: 150, padding: '1px' }}
+          sx={{ width: 150, height: 150, padding: '6px' }}
           image="https://eskipaper.com/images/fruit-background-2.jpg"
         />
       </Box>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent sx={{ padding: 0 }}>
+        <CardContent sx={{ padding: 0, bgcolor: 'background.paper' }}>
+          <Divider sx={{ borderBottomWidth: '3px' }} />
           {track.layers.map(layer => (
             <List
               sx={{
