@@ -1,11 +1,25 @@
 import React, { useRef, useState, useEffect } from 'react'
 import * as Tone from 'tone'
 import Note from './Note'
+import {
+  Slider,
+  TextField,
+  Button,
+  MenuItem,
+  InputLabel,
+  Select,
+} from '@mui/material'
+import LoginIcon from '@mui/icons-material/Login'
+import instruments from './instruments.js'
 
 const Sequencer = () => {
   const [buttonArray, setButtonArray] = useState([])
-  let step = useRef(0)
   const [cycle, setCycle] = useState(0)
+  const [title, setTitle] = useState('')
+  const [layerName, setLayerName] = useState('')
+  const [instrument, setInstrument] = useState(instruments[0])
+  let step = useRef(0)
+  let synth = useRef()
   const numberOfNotes = 32 * 25
 
   useEffect(() => {
@@ -48,23 +62,26 @@ const Sequencer = () => {
       }
     }
     setButtonArray(initialButtonArray)
+    synth.current = new Tone.AMSynth().toDestination()
+    synth.current.set(instrument.settings)
+    synth.current.volume.value = -10
   }, [])
 
   useEffect(() => {
     Tone.Transport.cancel()
     Tone.Transport.start()
-    Tone.start()
-    Tone.Transport.scheduleRepeat(repeat, '4n')
-    Tone.Transport.bpm.value = 160
+    // Tone.start()
+    Tone.Transport.scheduleRepeat(repeat, '16n')
+    Tone.Transport.bpm.value = 80
+
+    console.log(instrument.type)
   }, [cycle])
 
   async function repeat() {
-    console.log(step)
     for (const button of buttonArray) {
       if (button.step === step.current && button.activated) {
-        console.log(button)
-        const synth = new Tone.AMSynth().toDestination()
-        synth.triggerAttackRelease(button.note, '2n')
+        const now = Tone.now()
+        synth.current.triggerAttackRelease(button.note, '2n', now + 10)
       }
     }
     step.current = step.current + 1
@@ -105,26 +122,103 @@ const Sequencer = () => {
     )
   }
 
-  // let instrument = new Tone.Synth().toMaster()
-  // let synthJSON = {
-  //   oscillator: {
-  //     type: 'fatcustom',
-  //     partials: [0.2, 1, 0, 0.5, 0.1],
-  //     spread: 40,
-  //     count: 3,
-  //   },
-  //   envelope: {
-  //     attack: 0.001,
-  //     decay: 1.6,
-  //     sustain: 0,
-  //     release: 1.6,
-  //   },
-  // }
+  const uploadLayer = event => {
+    event.preventDefault()
+    const sequence = buttonArray.filter(button => {
+      return button.activated
+    })
+    const layer = {
+      name: layerName,
+      user: 1,
+      sequence: sequence,
+      instrument: instrument.name,
+      volume: 0,
+    }
 
-  // instrument.set(synthJSON)
-  // instrument.volume.value = -20
+    const song = {
+      title: title,
+      bpm: 80,
+      layers: [],
+    }
 
-  return buttons
+    console.log(layer)
+  }
+
+  const changeInstrument = e => {
+    setInstrument(
+      instruments.filter(instrument => {
+        return instrument.name === e.target.value
+      })[0],
+    )
+    switch (instrument.type) {
+      case 'AM':
+        synth.current = new Tone.AMSynth().toDestination()
+        break
+      case 'FM':
+        synth.current = new Tone.FMSynth().toDestination()
+        break
+      case 'Mono':
+        synth.current = new Tone.MonoSynth().toDestination()
+        break
+    }
+    synth.current.set(instrument.settings)
+    synth.current.volume.value = -10
+  }
+
+  return (
+    <div>
+      {buttons}
+      <form onSubmit={uploadLayer}>
+        {' '}
+        <TextField
+          required
+          sx={{ width: '75%' }}
+          id="title"
+          label="Title"
+          variant="outlined"
+          type="text"
+          autoComplete="off"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+        <TextField
+          required
+          sx={{ width: '75%' }}
+          id="layerName"
+          label="Layer Name"
+          variant="outlined"
+          type="text"
+          autoComplete="off"
+          value={layerName}
+          onChange={e => setLayerName(e.target.value)}
+        />
+        <InputLabel id="instrument">Instrument</InputLabel>
+        <Select
+          labelId="instrument"
+          id="instrument"
+          value={instrument.name}
+          label="instrument"
+          onChange={e => {
+            changeInstrument(e)
+          }}
+        >
+          {instruments.map(instrument => {
+            return (
+              <MenuItem value={instrument.name}>{instrument.name}</MenuItem>
+            )
+          })}
+        </Select>
+        <Button
+          sx={{ width: '50%' }}
+          variant="contained"
+          endIcon={<LoginIcon />}
+          type="submit"
+        >
+          Upload
+        </Button>
+      </form>
+    </div>
+  )
 }
 
 export default Sequencer
