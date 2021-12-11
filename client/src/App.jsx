@@ -7,9 +7,9 @@ import { ThemeProvider, CssBaseline } from '@mui/material'
 import theme from './theme'
 
 import Home from './components/Home'
-import Timeline from './components/Timeline'
+import Timeline from './components/Timeline/Timeline'
 import Auth from './components/auth/Auth'
-import Sequencer from './components/sequencer/Sequencer'
+import Sequencer from './components/Sequencer/Sequencer'
 
 const App = () => {
   //Custom auth token hook
