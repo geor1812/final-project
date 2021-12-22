@@ -47,7 +47,7 @@ const Sequencer = () => {
           { step: 20, note: 'F#5', activated: true, id: 25 },
           { step: 28, note: 'F#5', activated: true, id: 33 },
         ],
-        volume: -10,
+        volume: -20,
       },
     ],
   }

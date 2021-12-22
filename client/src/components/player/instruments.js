@@ -60,7 +60,7 @@ const instruments = [
   {
     id: 3,
     name: 'bass',
-    type: 'Mono',
+    type: 'FM',
     settings: {
       portamento: 0.08,
       oscillator: {

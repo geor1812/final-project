@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Container, Box, Grid } from '@mui/material'
 import TrackCard from './TrackCard'
+import * as Tone from 'tone'
+import Player from '../player/Player'
 
 const mockData = [
   {
@@ -12,16 +14,61 @@ const mockData = [
         name: 'Bouncy Bass',
         user: 'gary123',
         instrument: 'Bass',
+        sequence: [
+          { step: 0, note: 'B5', activated: true, id: 0 },
+          { step: 16, note: 'B5', activated: true, id: 16 },
+          { step: 26, note: 'B5', activated: true, id: 26 },
+          { step: 2, note: 'A5', activated: true, id: 4 },
+          { step: 10, note: 'A5', activated: true, id: 12 },
+          { step: 18, note: 'A5', activated: true, id: 20 },
+          { step: 22, note: 'A5', activated: true, id: 24 },
+          { step: 30, note: 'A5', activated: true, id: 32 },
+          { step: 6, note: 'F#5', activated: true, id: 11 },
+          { step: 14, note: 'F#5', activated: true, id: 19 },
+          { step: 20, note: 'F#5', activated: true, id: 25 },
+          { step: 28, note: 'F#5', activated: true, id: 33 },
+        ],
+        volume: -20,
       },
       {
-        name: 'Fun Melody',
-        user: 'Ben254',
+        name: 'Beepy Beeps',
+        user: 'gary123',
         instrument: 'Beep',
+        sequence: [
+          { step: 2, note: 'A5', activated: true, id: 0 },
+          { step: 14, note: 'B5', activated: true, id: 16 },
+          { step: 26, note: 'A5', activated: true, id: 26 },
+          { step: 4, note: 'A5', activated: true, id: 4 },
+          { step: 10, note: 'A5', activated: true, id: 12 },
+          { step: 16, note: 'A5', activated: true, id: 20 },
+          { step: 22, note: 'F#5', activated: true, id: 24 },
+          { step: 30, note: 'A5', activated: true, id: 32 },
+          { step: 6, note: 'F#5', activated: true, id: 11 },
+          { step: 14, note: 'B5', activated: true, id: 19 },
+          { step: 20, note: 'F#5', activated: true, id: 25 },
+          { step: 28, note: 'F#5', activated: true, id: 33 },
+        ],
+        volume: -20,
       },
       {
-        name: 'Background Synth',
-        user: 'Lin987',
-        instrument: 'Boop',
+        name: 'Beep Beeps',
+        user: 'gary123',
+        instrument: 'Beep',
+        sequence: [
+          { step: 2, note: 'D5', activated: true, id: 0 },
+          { step: 14, note: 'B5', activated: true, id: 16 },
+          { step: 26, note: 'D5', activated: true, id: 26 },
+          { step: 0, note: 'D5', activated: true, id: 4 },
+          { step: 10, note: 'D5', activated: true, id: 12 },
+          { step: 16, note: 'D5', activated: true, id: 20 },
+          { step: 22, note: 'F#5', activated: true, id: 24 },
+          { step: 30, note: 'D5', activated: true, id: 32 },
+          { step: 6, note: 'F#5', activated: true, id: 11 },
+          { step: 14, note: 'B5', activated: true, id: 19 },
+          { step: 20, note: 'F#5', activated: true, id: 25 },
+          { step: 28, note: 'F#5', activated: true, id: 33 },
+        ],
+        volume: -20,
       },
     ],
   },
@@ -34,16 +81,61 @@ const mockData = [
         name: 'Bouncy Bass',
         user: 'Remi678',
         instrument: 'Bass',
+        sequence: [
+          { step: 2, note: 'A5', activated: true, id: 0 },
+          { step: 14, note: 'B5', activated: true, id: 16 },
+          { step: 26, note: 'A5', activated: true, id: 26 },
+          { step: 12, note: 'A5', activated: true, id: 4 },
+          { step: 10, note: 'A5', activated: true, id: 12 },
+          { step: 16, note: 'A5', activated: true, id: 20 },
+          { step: 22, note: 'F#5', activated: true, id: 24 },
+          { step: 30, note: 'A5', activated: true, id: 32 },
+          { step: 6, note: 'F#5', activated: true, id: 11 },
+          { step: 18, note: 'B5', activated: true, id: 19 },
+          { step: 20, note: 'F#5', activated: true, id: 25 },
+          { step: 28, note: 'F#5', activated: true, id: 33 },
+        ],
+        volume: 0,
       },
       {
         name: 'Subtle Synth',
         user: 'Lin987',
-        instrument: 'CalmSynth',
+        instrument: 'Boop',
+        sequence: [
+          { step: 2, note: 'A5', activated: true, id: 0 },
+          { step: 14, note: 'B5', activated: true, id: 16 },
+          { step: 26, note: 'A5', activated: true, id: 26 },
+          { step: 22, note: 'A5', activated: true, id: 4 },
+          { step: 10, note: 'A5', activated: true, id: 12 },
+          { step: 16, note: 'A5', activated: true, id: 20 },
+          { step: 24, note: 'F#5', activated: true, id: 24 },
+          { step: 30, note: 'A5', activated: true, id: 32 },
+          { step: 6, note: 'F#5', activated: true, id: 11 },
+          { step: 12, note: 'B5', activated: true, id: 19 },
+          { step: 20, note: 'F#5', activated: true, id: 25 },
+          { step: 28, note: 'F#5', activated: true, id: 33 },
+        ],
+        volume: 0,
       },
       {
         name: 'Extra Harmony',
         user: 'George721',
         instrument: 'Beep',
+        sequence: [
+          { step: 4, note: 'A5', activated: true, id: 0 },
+          { step: 8, note: 'B5', activated: true, id: 16 },
+          { step: 20, note: 'A5', activated: true, id: 26 },
+          { step: 12, note: 'A5', activated: true, id: 4 },
+          { step: 10, note: 'A5', activated: true, id: 12 },
+          { step: 16, note: 'A5', activated: true, id: 20 },
+          { step: 22, note: 'F#5', activated: true, id: 24 },
+          { step: 30, note: 'A5', activated: true, id: 32 },
+          { step: 6, note: 'F#5', activated: true, id: 11 },
+          { step: 14, note: 'B5', activated: true, id: 19 },
+          { step: 20, note: 'F#5', activated: true, id: 25 },
+          { step: 28, note: 'F#5', activated: true, id: 33 },
+        ],
+        volume: 0,
       },
     ],
   },
@@ -72,6 +164,8 @@ const mockData = [
 
 const Timeline = props => {
   const { token } = props
+  const [currentTrack, setCurrentTrack] = useState()
+  const [play, setPlay] = useState(0)
   let navigate = useNavigate()
 
   useEffect(() => {
@@ -80,8 +174,22 @@ const Timeline = props => {
     }
   })
 
+  const handlePlay = () => {
+    Tone.start()
+    setPlay(play + 1)
+  }
+
+  const handlePause = () => {
+    Tone.Transport.stop()
+  }
+
+  const changeCurrentTrack = track => {
+    setCurrentTrack(track)
+  }
+
   return (
     <Container>
+      <Player track={currentTrack} play={play}></Player>
       <Box
         display="flex"
         justifyContent="center"
@@ -93,7 +201,12 @@ const Timeline = props => {
             {mockData.map(track => {
               return (
                 <Grid item>
-                  <TrackCard track={track} />
+                  <TrackCard
+                    track={track}
+                    handlePlay={handlePlay}
+                    changeCurrentTrack={changeCurrentTrack}
+                    handlePause={handlePause}
+                  />
                 </Grid>
               )
             })}
