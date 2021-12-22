@@ -8,19 +8,49 @@ import {
   MenuItem,
   InputLabel,
   Select,
+  Stack,
 } from '@mui/material'
 import LoginIcon from '@mui/icons-material/Login'
-import instruments from './instruments.js'
+import VolumeDown from '@mui/icons-material/VolumeDown'
+import VolumeUp from '@mui/icons-material/VolumeUp'
+import instruments from '../player/instruments.js'
+import Player from '../player/Player'
 
 const Sequencer = () => {
   const [buttonArray, setButtonArray] = useState([])
-  const [cycle, setCycle] = useState(0)
   const [title, setTitle] = useState('')
   const [layerName, setLayerName] = useState('')
-  const [instrument, setInstrument] = useState(instruments[0])
-  let step = useRef(0)
-  let synth = useRef()
-  const numberOfNotes = 32 * 25
+  const [instrument, setInstrument] = useState('beep')
+  const [volume, setVolume] = useState(-10)
+  const [currentTrack, setCurrentTrack] = useState()
+  const [numberOfLayers, setNumberOfLayers] = useState()
+
+  const mockData = {
+    title: 'Meadow',
+    bpm: '80',
+    layers: [
+      {
+        name: 'Bouncy Bass',
+        user: 'gary123',
+        instrument: 'Bass',
+        sequence: [
+          { step: 0, note: 'B5', activated: true, id: 0 },
+          { step: 16, note: 'B5', activated: true, id: 16 },
+          { step: 26, note: 'B5', activated: true, id: 26 },
+          { step: 2, note: 'A5', activated: true, id: 4 },
+          { step: 10, note: 'A5', activated: true, id: 12 },
+          { step: 18, note: 'A5', activated: true, id: 20 },
+          { step: 22, note: 'A5', activated: true, id: 24 },
+          { step: 30, note: 'A5', activated: true, id: 32 },
+          { step: 6, note: 'F#5', activated: true, id: 11 },
+          { step: 14, note: 'F#5', activated: true, id: 19 },
+          { step: 20, note: 'F#5', activated: true, id: 25 },
+          { step: 28, note: 'F#5', activated: true, id: 33 },
+        ],
+        volume: -10,
+      },
+    ],
+  }
 
   useEffect(() => {
     const initialButtonArray = []
@@ -62,34 +92,39 @@ const Sequencer = () => {
       }
     }
     setButtonArray(initialButtonArray)
-    synth.current = new Tone.AMSynth().toDestination()
-    synth.current.set(instrument.settings)
-    synth.current.volume.value = -10
+    setCurrentTrack(mockData)
+    setNumberOfLayers(mockData.layers.length)
   }, [])
 
-  useEffect(() => {
-    Tone.Transport.cancel()
-    Tone.Transport.start()
-    // Tone.start()
-    Tone.Transport.scheduleRepeat(repeat, '16n')
-    Tone.Transport.bpm.value = 80
-
-    console.log(instrument.type)
-  }, [cycle])
-
-  async function repeat() {
-    for (const button of buttonArray) {
-      if (button.step === step.current && button.activated) {
-        const now = Tone.now()
-        synth.current.triggerAttackRelease(button.note, '2n', now + 10)
-      }
-    }
-    step.current = step.current + 1
-    if (step.current > 32) {
-      step.current = 0
-      setCycle(cycle + 1)
-    }
-  }
+  const buttons = []
+  const steps = []
+  let buttonId = 0
+  const notes = [
+    'B5',
+    'A#5',
+    'A5',
+    'G#5',
+    'G5',
+    'F#5',
+    'F5',
+    'E5',
+    'D#5',
+    'D5',
+    'C#5',
+    'C5',
+    'B4',
+    'A#4',
+    'A4',
+    'G#4',
+    'G4',
+    'F#4',
+    'F4',
+    'E4',
+    'D#4',
+    'D4',
+    'C#4',
+    'C4',
+  ]
 
   const toggleNoteActivate = e => {
     Tone.start()
@@ -101,10 +136,7 @@ const Sequencer = () => {
     }
   }
 
-  const buttons = []
-  let buttonId = 0
-
-  for (let j = 0; j < 25; j++) {
+  for (let j = 0; j < 24; j++) {
     const row = []
     for (let i = 0; i < 32; i++) {
       row.push(
@@ -117,13 +149,49 @@ const Sequencer = () => {
     }
     buttons.push(
       <div style={{ display: 'flex', flexDirection: 'row' }} id={'row' + j}>
+        <div
+          style={{
+            height: '20px',
+            width: '10px',
+            flex: 1,
+            border: 'none',
+          }}
+        >
+          <h1 style={{ fontSize: 10 }}>{notes[j]}</h1>
+        </div>
         {row}
       </div>,
     )
   }
 
-  const uploadLayer = event => {
-    event.preventDefault()
+  // const uploadLayer = event => {
+  //   event.preventDefault()
+  //   const sequence = buttonArray.filter(button => {
+  //     return button.activated
+  //   })
+  //   const layer = {
+  //     name: layerName,
+  //     user: 1,
+  //     sequence: sequence,
+  //     instrument: instrument,
+  //     volume: volume,
+  //   }
+
+  //   const song = {
+  //     title: title,
+  //     bpm: 80,
+  //     layers: [],
+  //   }
+  // }
+
+  const changeInstrument = e => {
+    setInstrument(e.target.value)
+  }
+
+  const changeVolume = e => {
+    setVolume(e.target.value)
+  }
+  const changeTrack = e => {
     const sequence = buttonArray.filter(button => {
       return button.activated
     })
@@ -131,44 +199,25 @@ const Sequencer = () => {
       name: layerName,
       user: 1,
       sequence: sequence,
-      instrument: instrument.name,
-      volume: 0,
+      instrument: instrument,
+      volume: volume,
     }
 
-    const song = {
-      title: title,
-      bpm: 80,
-      layers: [],
-    }
+    const currentTrackCopy = { ...currentTrack }
 
-    console.log(layer)
-  }
-
-  const changeInstrument = e => {
-    setInstrument(
-      instruments.filter(instrument => {
-        return instrument.name === e.target.value
-      })[0],
-    )
-    switch (instrument.type) {
-      case 'AM':
-        synth.current = new Tone.AMSynth().toDestination()
-        break
-      case 'FM':
-        synth.current = new Tone.FMSynth().toDestination()
-        break
-      case 'Mono':
-        synth.current = new Tone.MonoSynth().toDestination()
-        break
+    if (currentTrack.layers.length > numberOfLayers) {
+      currentTrack.layers.pop()
     }
-    synth.current.set(instrument.settings)
-    synth.current.volume.value = -10
+    currentTrackCopy.layers.push(layer)
+    setCurrentTrack(currentTrackCopy)
   }
 
   return (
     <div>
+      <Player track={currentTrack} changeTrack={changeTrack}></Player>
       {buttons}
-      <form onSubmit={uploadLayer}>
+      {/* <form onSubmit={uploadLayer}> */}
+      <form>
         {' '}
         <TextField
           required
@@ -196,7 +245,7 @@ const Sequencer = () => {
         <Select
           labelId="instrument"
           id="instrument"
-          value={instrument.name}
+          value={instrument}
           label="instrument"
           onChange={e => {
             changeInstrument(e)
@@ -208,6 +257,17 @@ const Sequencer = () => {
             )
           })}
         </Select>
+        <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
+          <VolumeDown />
+          <Slider
+            aria-label="Volume"
+            value={volume}
+            onChange={changeVolume}
+            min={-20}
+            max={-5}
+          />
+          <VolumeUp />
+        </Stack>
         <Button
           sx={{ width: '50%' }}
           variant="contained"

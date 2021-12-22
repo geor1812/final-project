@@ -13,17 +13,40 @@ import {
   Divider,
 } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import PauseIcon from '@mui/icons-material/Pause'
 import AddIcon from '@mui/icons-material/Add'
 import NotesIcon from '@mui/icons-material/Notes'
+import * as Tone from 'tone'
 
-const TrackCard = ({ track }) => {
+const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
   const [expanded, setExpanded] = useState(false)
+  const [paused, setPaused] = useState(true)
 
   const handleExpand = () => {
     if (expanded === true) {
       setExpanded(false)
     } else {
       setExpanded(true)
+    }
+  }
+
+  const playPauseIcons = () => {
+    if (paused) {
+      return <PlayArrowIcon color="primary" sx={{ height: 38, width: 38 }} />
+    } else {
+      return <PauseIcon color="primary" sx={{ height: 38, width: 38 }} />
+    }
+  }
+
+  const handlePlayAndChangeTrack = () => {
+    if (!paused) {
+      // handlePause()
+      Tone.Transport.stop()
+      setPaused(true)
+    } else {
+      changeCurrentTrack(track)
+      handlePlay()
+      setPaused(false)
     }
   }
 
@@ -66,8 +89,11 @@ const TrackCard = ({ track }) => {
             <IconButton onClick={handleExpand} aria-label="expand">
               <NotesIcon sx={{ height: 20, width: 20 }} />
             </IconButton>
-            <IconButton aria-label="play/pause">
-              <PlayArrowIcon color="primary" sx={{ height: 38, width: 38 }} />
+            <IconButton
+              onClick={handlePlayAndChangeTrack}
+              aria-label="play/pause"
+            >
+              {playPauseIcons()}
             </IconButton>
             <IconButton aria-label="contribute">
               <AddIcon sx={{ height: 20, width: 20 }} />
