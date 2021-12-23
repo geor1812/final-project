@@ -39,7 +39,13 @@ const Login = props => {
   return (
     <>
       <Paper
-        sx={{ padding: '20px', pt: '50px', width: '500px', height: '500px' }}
+        sx={{
+          padding: '20px',
+          pt: '50px',
+          width: '500px',
+          height: '500px',
+          boxShadow: '5px 10px 15px 10px #170a1c',
+        }}
       >
         <form onSubmit={handleLogin}>
           <Stack alignItems="center" spacing={3}>

@@ -116,7 +116,6 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
             <List
               sx={{
                 maxWidth: '300px',
-                //bgcolor: 'background.paper',
               }}
             >
               <ListItem>
