@@ -21,7 +21,7 @@ const App = () => {
       <Wrapper>
         <Routes>
           <Route exact path="/" element={<Home />} />
-          <Route path="/sequencer" element={<Sequencer />} />
+          <Route path="/sequencer" element={<Sequencer token={token} />} />
           <Route exact path="/timeline" element={<Timeline token={token} />} />
           <Route path="/auth" element={<Auth setToken={setToken} />} />
         </Routes>
