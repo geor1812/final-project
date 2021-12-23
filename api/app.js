@@ -10,6 +10,7 @@ require('dotenv').config()
 
 const accountRouter = require('./routes/accountRouter')
 const authRouter = require('./routes/authRouter')
+const trackRouter = require('./routes/trackRouter')
 
 mongoose.connect(process.env.DB_URL, {
   useUnifiedTopology: true,
@@ -33,6 +34,7 @@ app.use(cors())
 
 app.use('/accounts', accountRouter)
 app.use('/auth', authRouter)
+app.use('/tracks', trackRouter)
 
 app.use((req, res, next) => {
   next(createError(404))

@@ -17,6 +17,7 @@ import PauseIcon from '@mui/icons-material/Pause'
 import AddIcon from '@mui/icons-material/Add'
 import NotesIcon from '@mui/icons-material/Notes'
 import * as Tone from 'tone'
+import { Link } from 'react-router-dom'
 
 const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
   const [expanded, setExpanded] = useState(false)
@@ -95,9 +96,11 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
             >
               {playPauseIcons()}
             </IconButton>
-            <IconButton aria-label="contribute">
-              <AddIcon sx={{ height: 20, width: 20 }} />
-            </IconButton>
+            <Link to="/sequencer" state={{ track: track }}>
+              <IconButton aria-label="contribute">
+                <AddIcon sx={{ height: 20, width: 20 }} />
+              </IconButton>
+            </Link>
           </Box>
         </Box>
         <CardMedia

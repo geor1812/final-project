@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import * as Tone from 'tone'
 import Note from './Note'
 import {
@@ -9,96 +10,41 @@ import {
   InputLabel,
   Select,
   Stack,
+  IconButton,
 } from '@mui/material'
 import LoginIcon from '@mui/icons-material/Login'
 import VolumeDown from '@mui/icons-material/VolumeDown'
 import VolumeUp from '@mui/icons-material/VolumeUp'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import PauseIcon from '@mui/icons-material/Pause'
 import instruments from '../player/instruments.js'
 import Player from '../player/Player'
+import axios from 'axios'
 
-const Sequencer = () => {
+const Sequencer = props => {
+  const { token, location } = props
+  let navigate = useNavigate()
+
+  const { state } = useLocation()
+  const track = false
+  if (state) {
+    const { track } = state
+  }
+
+  const [play, setPlay] = useState(0)
+
   const [buttonArray, setButtonArray] = useState([])
-  const [title, setTitle] = useState('')
-  const [layerName, setLayerName] = useState('')
-  const [instrument, setInstrument] = useState('beep')
-  const [volume, setVolume] = useState(-10)
   const [currentTrack, setCurrentTrack] = useState()
   const [numberOfLayers, setNumberOfLayers] = useState()
 
-  const mockData = {
-    title: 'Meadow',
-    bpm: '80',
-    layers: [
-      {
-        name: 'Bouncy Bass',
-        user: 'gary123',
-        instrument: 'Bass',
-        sequence: [
-          { step: 0, note: 'B5', activated: true, id: 0 },
-          { step: 16, note: 'B5', activated: true, id: 16 },
-          { step: 26, note: 'B5', activated: true, id: 26 },
-          { step: 2, note: 'A5', activated: true, id: 4 },
-          { step: 10, note: 'A5', activated: true, id: 12 },
-          { step: 18, note: 'A5', activated: true, id: 20 },
-          { step: 22, note: 'A5', activated: true, id: 24 },
-          { step: 30, note: 'A5', activated: true, id: 32 },
-          { step: 6, note: 'F#5', activated: true, id: 11 },
-          { step: 14, note: 'F#5', activated: true, id: 19 },
-          { step: 20, note: 'F#5', activated: true, id: 25 },
-          { step: 28, note: 'F#5', activated: true, id: 33 },
-        ],
-        volume: -20,
-      },
-    ],
-  }
+  const [title, setTitle] = useState('')
+  const [bpm, setBpm] = useState(80)
 
-  useEffect(() => {
-    const initialButtonArray = []
-    const notes = [
-      'B5',
-      'A#5',
-      'A5',
-      'G#5',
-      'G5',
-      'F#5',
-      'F5',
-      'E5',
-      'D#5',
-      'D5',
-      'C#5',
-      'C5',
-      'B4',
-      'A#4',
-      'A4',
-      'G#4',
-      'G4',
-      'F#4',
-      'F4',
-      'E4',
-      'D#4',
-      'D4',
-      'C#4',
-      'C4',
-    ]
+  const [username, setUsername] = useState('')
+  const [layerName, setLayerName] = useState('')
+  const [instrument, setInstrument] = useState('beep')
+  const [volume, setVolume] = useState(-10)
 
-    for (let j = 0; j < 25; j++) {
-      for (let i = 0; i < 32; i++) {
-        initialButtonArray.push({
-          step: i,
-          note: notes[j],
-          activated: false,
-          id: i + j,
-        })
-      }
-    }
-    setButtonArray(initialButtonArray)
-    setCurrentTrack(mockData)
-    setNumberOfLayers(mockData.layers.length)
-  }, [])
-
-  const buttons = []
-  const steps = []
-  let buttonId = 0
   const notes = [
     'B5',
     'A#5',
@@ -125,6 +71,53 @@ const Sequencer = () => {
     'C#4',
     'C4',
   ]
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/auth')
+    }
+  })
+
+  useEffect(() => {
+    const initialButtonArray = []
+    for (let j = 0; j < 25; j++) {
+      for (let i = 0; i < 32; i++) {
+        initialButtonArray.push({
+          step: i,
+          note: notes[j],
+          activated: false,
+          id: i + j,
+        })
+      }
+    }
+    setButtonArray(initialButtonArray)
+
+    if (track) {
+      setCurrentTrack(track)
+      setNumberOfLayers(track.layers.length)
+      setTitle(track.title)
+    } else {
+      setNumberOfLayers(0)
+      setCurrentTrack({
+        title: '',
+        bpm: bpm,
+        layers: [],
+      })
+      // setPlay(play + 1)
+    }
+
+    axios({
+      method: 'get',
+      url: `http://localhost:9000/accounts/${token}`,
+    }).then(res => {
+      console.log(res.data.account.username)
+      setUsername(res.data.account.username)
+    })
+  }, [])
+
+  const buttons = []
+  const steps = []
+  let buttonId = 0
 
   const toggleNoteActivate = e => {
     Tone.start()
@@ -164,26 +157,6 @@ const Sequencer = () => {
     )
   }
 
-  // const uploadLayer = event => {
-  //   event.preventDefault()
-  //   const sequence = buttonArray.filter(button => {
-  //     return button.activated
-  //   })
-  //   const layer = {
-  //     name: layerName,
-  //     user: 1,
-  //     sequence: sequence,
-  //     instrument: instrument,
-  //     volume: volume,
-  //   }
-
-  //   const song = {
-  //     title: title,
-  //     bpm: 80,
-  //     layers: [],
-  //   }
-  // }
-
   const changeInstrument = e => {
     setInstrument(e.target.value)
   }
@@ -191,33 +164,73 @@ const Sequencer = () => {
   const changeVolume = e => {
     setVolume(e.target.value)
   }
+
+  const changeBpm = e => {
+    setBpm(e.target.value)
+  }
+
   const changeTrack = e => {
     const sequence = buttonArray.filter(button => {
       return button.activated
     })
+
     const layer = {
       name: layerName,
-      user: 1,
       sequence: sequence,
       instrument: instrument,
       volume: volume,
+      user: username,
     }
 
-    const currentTrackCopy = { ...currentTrack }
+    const layers = [...currentTrack.layers]
 
-    if (currentTrack.layers.length > numberOfLayers) {
-      currentTrack.layers.pop()
+    if (layers.length > numberOfLayers) {
+      layers.pop()
     }
-    currentTrackCopy.layers.push(layer)
-    setCurrentTrack(currentTrackCopy)
+    layers.push(layer)
+
+    const newTrack = {
+      title: title,
+      bpm: bpm,
+      layers: layers,
+    }
+    setCurrentTrack(newTrack)
+  }
+
+  const uploadLayer = event => {
+    event.preventDefault()
+    console.log(currentTrack)
+    axios({
+      method: 'post',
+      url: 'http://localhost:9000/tracks/',
+      data: currentTrack,
+    })
+      // .then(res => {
+      //   if (res.data.createdTrack) {
+      //     setAlert({
+      //       severity: 'success',
+      //       message: 'Track created successfully! You can now log in.',
+      //     })
+      //   }
+      // })
+      .catch(error => {
+        // setAlert({
+        //   severity: 'error',
+        //   message: error.response.data.message,
+        // })
+        console.log(error)
+      })
   }
 
   return (
     <div>
-      <Player track={currentTrack} changeTrack={changeTrack}></Player>
+      <Player
+        track={currentTrack}
+        changeTrack={changeTrack}
+        play={play}
+      ></Player>
       {buttons}
-      {/* <form onSubmit={uploadLayer}> */}
-      <form>
+      <form onSubmit={uploadLayer}>
         {' '}
         <TextField
           required
@@ -241,6 +254,23 @@ const Sequencer = () => {
           value={layerName}
           onChange={e => setLayerName(e.target.value)}
         />
+        <TextField
+          required
+          sx={{ width: '5%' }}
+          id="BPM"
+          label="BPM"
+          variant="outlined"
+          type="number"
+          autoComplete="off"
+          value={bpm}
+          onChange={e => setBpm(e.target.value)}
+        />
+        <IconButton
+          onClick={() => Tone.Transport.start()}
+          aria-label="play/pause"
+        >
+          <PlayArrowIcon color="primary" sx={{ height: 38, width: 38 }} />
+        </IconButton>
         <InputLabel id="instrument">Instrument</InputLabel>
         <Select
           labelId="instrument"
