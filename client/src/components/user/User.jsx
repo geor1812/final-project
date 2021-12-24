@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Container, Box, Grid } from '@mui/material'
-import TrackCard from './TrackCard'
+import {
+  Container,
+  Box,
+  Grid,
+  Typography,
+  Tooltip,
+  IconButton,
+} from '@mui/material'
+import TrackCard from '../timeline/TrackCard'
 import * as Tone from 'tone'
 import Player from '../player/Player'
 import axios from 'axios'
+import TimelineIcon from '@mui/icons-material/Timeline'
 
-const Timeline = props => {
+const User = props => {
   const { token } = props
   const [tracks, setTracks] = useState()
+  const [user, setUser] = useState()
   const [currentTrack, setCurrentTrack] = useState()
   const [play, setPlay] = useState(0)
   let navigate = useNavigate()
@@ -22,7 +31,22 @@ const Timeline = props => {
   useEffect(() => {
     axios({
       method: 'get',
-      url: `http://localhost:9000/tracks`,
+      url: `${
+        process.env.REACT_APP_API_URL
+      }/accounts/${window.location.pathname.slice(6)}`,
+    })
+      .then(res => {
+        setUser(res.data.account)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }, [])
+
+  useEffect(() => {
+    axios({
+      method: 'get',
+      url: `${process.env.REACT_APP_API_URL}/tracks`,
     })
       .then(res => {
         setTracks(res.data.tracks)
@@ -45,9 +69,32 @@ const Timeline = props => {
     setCurrentTrack(track)
   }
 
+  const handleTimelineIcon = () => {
+    navigate('/timeline')
+  }
+
   return (
     <Container>
       <Player track={currentTrack} play={play}></Player>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        flexDirection="column"
+      >
+        <Typography color="primary" variant="h3">
+          {user?.username}
+        </Typography>
+        <Tooltip title="Back to timeline">
+          <IconButton
+            color="secondary"
+            component="span"
+            onClick={handleTimelineIcon}
+          >
+            <TimelineIcon fontSize="large" color="tertiary" />
+          </IconButton>
+        </Tooltip>
+      </Box>
       <Box
         display="flex"
         justifyContent="center"
@@ -79,4 +126,4 @@ const Timeline = props => {
   )
 }
 
-export default Timeline
+export default User

@@ -11,6 +11,7 @@ import {
   ListItem,
   ListItemText,
   Divider,
+  Tooltip,
 } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
@@ -87,9 +88,12 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
               bgcolor: 'background.paper',
             }}
           >
-            <IconButton onClick={handleExpand} aria-label="expand">
-              <NotesIcon sx={{ height: 20, width: 20 }} />
-            </IconButton>
+            <Tooltip title="View layers">
+              <IconButton onClick={handleExpand} aria-label="expand">
+                <NotesIcon sx={{ height: 20, width: 20 }} />
+              </IconButton>
+            </Tooltip>
+
             <IconButton
               onClick={handlePlayAndChangeTrack}
               aria-label="play/pause"
@@ -97,9 +101,11 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
               {playPauseIcons()}
             </IconButton>
             <Link to="/sequencer" state={{ track: track }}>
-              <IconButton aria-label="contribute">
-                <AddIcon sx={{ height: 20, width: 20 }} />
-              </IconButton>
+              <Tooltip title="Contribute">
+                <IconButton aria-label="contribute">
+                  <AddIcon sx={{ height: 20, width: 20 }} />
+                </IconButton>
+              </Tooltip>
             </Link>
           </Box>
         </Box>

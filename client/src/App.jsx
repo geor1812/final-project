@@ -9,6 +9,7 @@ import {
   Link,
   Grid,
   IconButton,
+  Tooltip,
 } from '@mui/material'
 import theme from './theme'
 import PersonIcon from '@mui/icons-material/Person'
@@ -18,6 +19,7 @@ import Home from './components/Home'
 import Timeline from './components/timeline/Timeline'
 import Auth from './components/auth/Auth'
 import Sequencer from './components/sequencer/Sequencer'
+import User from './components/user/User'
 
 const App = () => {
   //Custom auth token hook
@@ -43,13 +45,15 @@ const App = () => {
           <>
             <Grid container>
               <Grid direction="row" alignItems="center" container xs={3}>
-                <IconButton
-                  color="secondary"
-                  component="span"
-                  onClick={handleUserIcon}
-                >
-                  <PersonIcon fontSize="large" color="secondary" />
-                </IconButton>
+                <Tooltip title="Go to this user's page">
+                  <IconButton
+                    color="secondary"
+                    component="span"
+                    onClick={handleUserIcon}
+                  >
+                    <PersonIcon fontSize="large" color="secondary" />
+                  </IconButton>
+                </Tooltip>
 
                 <Link
                   color="secondary"
@@ -62,14 +66,16 @@ const App = () => {
               </Grid>
               <Grid item style={{ flexGrow: '1' }} />
               <Grid xs={3}>
-                <IconButton
-                  sx={{ float: 'right' }}
-                  color="secondary"
-                  component="span"
-                  onClick={handleLogout}
-                >
-                  <LogoutIcon />
-                </IconButton>
+                <Tooltip title="Logout">
+                  <IconButton
+                    sx={{ float: 'right' }}
+                    color="secondary"
+                    component="span"
+                    onClick={handleLogout}
+                  >
+                    <LogoutIcon />
+                  </IconButton>
+                </Tooltip>
               </Grid>
             </Grid>
           </>
@@ -79,6 +85,7 @@ const App = () => {
           <Route path="/sequencer" element={<Sequencer token={token} />} />
           <Route exact path="/timeline" element={<Timeline token={token} />} />
           <Route path="/auth" element={<Auth setToken={setToken} />} />
+          <Route path="/user/:id" element={<User token={token} />} />
         </Routes>
       </Wrapper>
     </ThemeProvider>
