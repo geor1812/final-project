@@ -110,7 +110,6 @@ const Sequencer = props => {
       method: 'get',
       url: `http://localhost:9000/accounts/${token}`,
     }).then(res => {
-      console.log(res.data.account.username)
       setUsername(res.data.account.username)
     })
   }, [])
