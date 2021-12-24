@@ -25,6 +25,7 @@ const Login = props => {
       .then(res => {
         if (res.data.token) {
           setToken(res.data.token)
+          sessionStorage.setItem('currentUser', res.data.username)
           navigate('/timeline')
         }
       })

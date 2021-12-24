@@ -1,10 +1,18 @@
 import React from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import useToken from './useToken'
 
 import styled from 'styled-components'
-import { ThemeProvider, CssBaseline } from '@mui/material'
+import {
+  ThemeProvider,
+  CssBaseline,
+  Link,
+  Grid,
+  IconButton,
+} from '@mui/material'
 import theme from './theme'
+import PersonIcon from '@mui/icons-material/Person'
+import LogoutIcon from '@mui/icons-material/Logout'
 
 import Home from './components/Home'
 import Timeline from './components/timeline/Timeline'
@@ -15,10 +23,46 @@ const App = () => {
   //Custom auth token hook
   const { token, setToken } = useToken()
 
+  let navigate = useNavigate()
+
+  const handleLogout = () => {
+    setToken(null)
+    sessionStorage.clear()
+    navigate('/auth')
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Wrapper>
+        {['/', '/auth'].includes(window.location.pathname) ? null : (
+          <>
+            <Grid container>
+              <Grid direction="row" alignItems="center" container xs={3}>
+                <PersonIcon fontSize="large" color="secondary" />
+                <Link
+                  color="secondary"
+                  href={`/user/${token}`}
+                  underline="hover"
+                  sx={{}}
+                >
+                  {sessionStorage.getItem('currentUser')}
+                </Link>
+              </Grid>
+              <Grid item style={{ flexGrow: '1' }} />
+              <Grid xs={3}>
+                <IconButton
+                  sx={{ float: 'right' }}
+                  color="secondary"
+                  component="span"
+                  onClick={handleLogout}
+                >
+                  <LogoutIcon />
+                </IconButton>
+              </Grid>
+            </Grid>
+          </>
+        )}
         <Routes>
           <Route exact path="/" element={<Home token={token} />} />
           <Route path="/sequencer" element={<Sequencer token={token} />} />
@@ -31,7 +75,7 @@ const App = () => {
 }
 
 const Wrapper = styled.div`
-  padding: 20px;
+  padding: 10px 20px;
 `
 
 export default App

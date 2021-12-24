@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
 
       bcrypt.compare(req.body.password, hash, (error, result) => {
         if (result) {
-          res.status(200).send({ token: token })
+          res.status(200).send({ token: token, username: account.username })
         } else {
           res.status(401).send({ message: 'Invalid password' })
         }
