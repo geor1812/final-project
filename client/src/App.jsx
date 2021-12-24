@@ -7,7 +7,7 @@ import { ThemeProvider, CssBaseline } from '@mui/material'
 import theme from './theme'
 
 import Home from './components/Home'
-import Timeline from './components/Timeline/Timeline'
+import Timeline from './components/timeline/Timeline'
 import Auth from './components/auth/Auth'
 import Sequencer from './components/sequencer/Sequencer'
 
@@ -20,7 +20,7 @@ const App = () => {
       <CssBaseline />
       <Wrapper>
         <Routes>
-          <Route exact path="/" element={<Home />} />
+          <Route exact path="/" element={<Home token={token} />} />
           <Route path="/sequencer" element={<Sequencer token={token} />} />
           <Route exact path="/timeline" element={<Timeline token={token} />} />
           <Route path="/auth" element={<Auth setToken={setToken} />} />
