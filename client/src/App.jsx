@@ -31,6 +31,10 @@ const App = () => {
     navigate('/auth')
   }
 
+  const handleUserIcon = () => {
+    navigate(`/user/${token}`)
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -39,7 +43,14 @@ const App = () => {
           <>
             <Grid container>
               <Grid direction="row" alignItems="center" container xs={3}>
-                <PersonIcon fontSize="large" color="secondary" />
+                <IconButton
+                  color="secondary"
+                  component="span"
+                  onClick={handleUserIcon}
+                >
+                  <PersonIcon fontSize="large" color="secondary" />
+                </IconButton>
+
                 <Link
                   color="secondary"
                   href={`/user/${token}`}
