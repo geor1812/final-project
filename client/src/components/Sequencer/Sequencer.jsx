@@ -26,12 +26,13 @@ const Sequencer = props => {
   let navigate = useNavigate()
 
   const { state } = useLocation()
-  const track = false
-  if (state) {
-    const { track } = state
-  }
+  // console.log(state)
+  // const track = false
+  // if (state) {
+  //   const { track } = state
+  // }
 
-  const [play, setPlay] = useState(0)
+  const [paused, setPaused] = useState(false)
 
   const [buttonArray, setButtonArray] = useState([])
   const [currentTrack, setCurrentTrack] = useState()
@@ -43,7 +44,7 @@ const Sequencer = props => {
   const [username, setUsername] = useState('')
   const [layerName, setLayerName] = useState('')
   const [instrument, setInstrument] = useState('beep')
-  const [volume, setVolume] = useState(-10)
+  const [volume, setVolume] = useState(-25)
 
   const notes = [
     'B5',
@@ -86,16 +87,16 @@ const Sequencer = props => {
           step: i,
           note: notes[j],
           activated: false,
-          id: i + j,
+          id: i + j * 32,
         })
       }
     }
     setButtonArray(initialButtonArray)
 
-    if (track) {
-      setCurrentTrack(track)
-      setNumberOfLayers(track.layers.length)
-      setTitle(track.title)
+    if (state) {
+      setCurrentTrack(state.track)
+      setNumberOfLayers(state.track.layers.length)
+      setTitle(state.track.title)
     } else {
       setNumberOfLayers(0)
       setCurrentTrack({
@@ -103,7 +104,6 @@ const Sequencer = props => {
         bpm: bpm,
         layers: [],
       })
-      // setPlay(play + 1)
     }
 
     axios({
@@ -115,10 +115,6 @@ const Sequencer = props => {
     })
   }, [])
 
-  const buttons = []
-  const steps = []
-  let buttonId = 0
-
   const toggleNoteActivate = e => {
     Tone.start()
     const newButtonArray = buttonArray.map(note => note)
@@ -129,13 +125,29 @@ const Sequencer = props => {
     }
   }
 
+  const buttons = []
+  let buttonId = 0
+  let previouslyActivatedNotes = []
+
   for (let j = 0; j < 24; j++) {
     const row = []
     for (let i = 0; i < 32; i++) {
+      if (state) {
+        previouslyActivatedNotes = new Array(10)
+        state.track.layers.forEach((layer, index) => {
+          layer.sequence.forEach(note => {
+            if (note.id === buttonId) {
+              previouslyActivatedNotes[index] = true
+            }
+          })
+        })
+      }
+
       row.push(
         <Note
           toggleNoteActivate={toggleNoteActivate}
           buttonId={buttonId}
+          previouslyActivatedNotes={previouslyActivatedNotes}
         ></Note>,
       )
       buttonId += 1
@@ -155,18 +167,6 @@ const Sequencer = props => {
         {row}
       </div>,
     )
-  }
-
-  const changeInstrument = e => {
-    setInstrument(e.target.value)
-  }
-
-  const changeVolume = e => {
-    setVolume(e.target.value)
-  }
-
-  const changeBpm = e => {
-    setBpm(e.target.value)
   }
 
   const changeTrack = e => {
@@ -197,6 +197,14 @@ const Sequencer = props => {
     setCurrentTrack(newTrack)
   }
 
+  const playPauseIcons = () => {
+    if (paused) {
+      return <PlayArrowIcon color="primary" sx={{ height: 38, width: 38 }} />
+    } else {
+      return <PauseIcon color="primary" sx={{ height: 38, width: 38 }} />
+    }
+  }
+
   const uploadLayer = event => {
     event.preventDefault()
     console.log(currentTrack)
@@ -224,11 +232,7 @@ const Sequencer = props => {
 
   return (
     <div>
-      <Player
-        track={currentTrack}
-        changeTrack={changeTrack}
-        play={play}
-      ></Player>
+      <Player track={currentTrack} changeTrack={changeTrack}></Player>
       {buttons}
       <form onSubmit={uploadLayer}>
         {' '}
@@ -266,10 +270,14 @@ const Sequencer = props => {
           onChange={e => setBpm(e.target.value)}
         />
         <IconButton
-          onClick={() => Tone.Transport.start()}
+          onClick={() =>
+            paused
+              ? Tone.Transport.start() && setPaused(!paused)
+              : Tone.Transport.pause() && setPaused(!paused)
+          }
           aria-label="play/pause"
         >
-          <PlayArrowIcon color="primary" sx={{ height: 38, width: 38 }} />
+          {playPauseIcons()}
         </IconButton>
         <InputLabel id="instrument">Instrument</InputLabel>
         <Select
@@ -277,9 +285,7 @@ const Sequencer = props => {
           id="instrument"
           value={instrument}
           label="instrument"
-          onChange={e => {
-            changeInstrument(e)
-          }}
+          onChange={e => setInstrument(e.target.value)}
         >
           {instruments.map(instrument => {
             return (
@@ -292,9 +298,9 @@ const Sequencer = props => {
           <Slider
             aria-label="Volume"
             value={volume}
-            onChange={changeVolume}
-            min={-20}
-            max={-5}
+            onChange={e => setVolume(e.target.value)}
+            min={-30}
+            max={-20}
           />
           <VolumeUp />
         </Stack>

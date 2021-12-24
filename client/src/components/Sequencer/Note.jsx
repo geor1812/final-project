@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Note = props => {
+const Note = ({ buttonId, toggleNoteActivate, previouslyActivatedNotes }) => {
   const [activated, setActivated] = useState(false)
   const [color, setColor] = useState('orange')
 
@@ -11,11 +11,41 @@ const Note = props => {
       setColor('orange')
     }
     setActivated(!activated)
-    props.toggleNoteActivate(e)
+    toggleNoteActivate(e)
+  }
+
+  const showPreviouslyActivatedNotes = e => {
+    const noteIndicators = []
+
+    if (previouslyActivatedNotes[0]) {
+      noteIndicators.push(
+        <div
+          style={{
+            backgroundColor: 'greenyellow',
+            height: '5px',
+            width: '5px',
+            border: 'none',
+          }}
+        ></div>,
+      )
+    }
+    if (previouslyActivatedNotes[1]) {
+      noteIndicators.push(
+        <div
+          style={{
+            backgroundColor: 'purple',
+            height: '5px',
+            width: '5px',
+            border: 'none',
+          }}
+        ></div>,
+      )
+    }
+    return noteIndicators
   }
 
   let beatMargin = 0
-  if ((props.buttonId + 1) % 4 === 1) {
+  if ((buttonId + 1) % 4 === 1) {
     beatMargin = 5
   }
 
@@ -31,10 +61,12 @@ const Note = props => {
         flex: 1,
         border: 'none',
       }}
-      id={props.buttonId}
-      key={props.buttonId}
+      id={buttonId}
+      key={buttonId}
       onClick={e => toggleNoteActivateAndChangeColor(e)}
-    ></div>
+    >
+      {showPreviouslyActivatedNotes()}
+    </div>
   )
 }
 

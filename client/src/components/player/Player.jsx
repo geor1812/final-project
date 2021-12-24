@@ -2,9 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import * as Tone from 'tone'
 import instruments from './instruments.js'
 
-const Player = ({ track, changeTrack, play }) => {
-  const [cycle, setCycle] = useState(0)
-  const [volume, setVolume] = useState(-10)
+const Player = ({ track, changeTrack }) => {
   let step = useRef(0)
   let synths = useRef([])
 
@@ -41,7 +39,7 @@ const Player = ({ track, changeTrack, play }) => {
       Tone.Transport.scheduleRepeat(repeat, '16n')
       Tone.Transport.bpm.value = 80
     }
-  }, [track, play])
+  }, [track])
 
   async function repeat() {
     let synthNumber = 0
