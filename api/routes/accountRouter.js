@@ -25,6 +25,16 @@ router.get('/:id', async (req, res) => {
   }
 })
 
+/**Get by username */
+router.get('/username/:username', async (req, res) => {
+  try {
+    const account = await Account.findOne({ username: req.params.username })
+    res.send({ account: account })
+  } catch (error) {
+    res.status(500).send({ message: error.message })
+  }
+})
+
 /**Create new account  */
 router.post('/', async (req, res) => {
   try {

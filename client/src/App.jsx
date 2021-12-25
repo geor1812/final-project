@@ -14,6 +14,7 @@ import {
 import theme from './theme'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
+import TimelineIcon from '@mui/icons-material/Timeline'
 
 import Home from './components/Home'
 import Timeline from './components/timeline/Timeline'
@@ -37,6 +38,10 @@ const App = () => {
     navigate(`/user/${token}`)
   }
 
+  const handleTimelineIcon = () => {
+    navigate('/timeline')
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -45,7 +50,7 @@ const App = () => {
           <>
             <Grid container>
               <Grid direction="row" alignItems="center" container xs={3}>
-                <Tooltip title="Go to this user's page">
+                <Tooltip title="Go to your page">
                   <Button
                     startIcon={<PersonIcon color="secondary" />}
                     color="secondary"
@@ -55,6 +60,15 @@ const App = () => {
                   >
                     {sessionStorage.getItem('currentUser')}
                   </Button>
+                </Tooltip>
+                <Tooltip title="Go to timeline">
+                  <IconButton
+                    color="tertiary"
+                    component="span"
+                    onClick={handleTimelineIcon}
+                  >
+                    <TimelineIcon />
+                  </IconButton>
                 </Tooltip>
               </Grid>
               <Grid item style={{ flexGrow: '1' }} />

@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Container, Box, Grid } from '@mui/material'
+import {
+  Container,
+  Box,
+  Grid,
+  IconButton,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import TrackCard from './TrackCard'
 import * as Tone from 'tone'
 import Player from '../player/Player'
 import axios from 'axios'
+import SchoolIcon from '@mui/icons-material/School'
+import MusicNoteIcon from '@mui/icons-material/MusicNote'
 
 const Timeline = props => {
   const { token } = props
@@ -45,9 +54,48 @@ const Timeline = props => {
     setCurrentTrack(track)
   }
 
+  const handleCreate = () => {
+    navigate('/sequencer')
+  }
+
+  const handleLearn = () => {
+    navigate('/learn')
+  }
+
   return (
     <Container>
       <Player track={currentTrack} play={play}></Player>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        flexDirection="row"
+      >
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
+          sx={{ margin: '40px', mr: '150px', mt: '0px' }}
+        >
+          <IconButton onClick={handleCreate} color="primary">
+            <MusicNoteIcon sx={{ fontSize: '70px' }} />
+          </IconButton>
+          <Typography color="primary">CREATE</Typography>
+        </Box>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
+          sx={{ margin: '40px', ml: '150px', mt: '0px' }}
+        >
+          <IconButton onClick={handleLearn} color="tertiary">
+            <SchoolIcon sx={{ fontSize: '70px' }} />
+          </IconButton>
+          <Typography color="#dd517e">LEARN</Typography>
+        </Box>
+      </Box>
       <Box
         display="flex"
         justifyContent="center"

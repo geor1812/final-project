@@ -18,6 +18,19 @@ router.get('/:id', getTrack, (req, res) => {
   res.send({ track: res.track })
 })
 
+//Get tracks by username
+router.get('/username/:username', async (req, res) => {
+  try {
+    const tracks = await Track.find()
+    const filteredTracks = tracks.filter(track =>
+      track.layers.some(layer => layer.user === req.params.username),
+    )
+    res.status(200).send({ tracks: filteredTracks })
+  } catch {
+    res.status(500).send({ error: error.message })
+  }
+})
+
 //Create one
 router.post('', async (req, res) => {
   const track = new Track({

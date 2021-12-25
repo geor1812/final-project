@@ -8,7 +8,6 @@ import {
   Tooltip,
   IconButton,
   CardMedia,
-  Stack,
 } from '@mui/material'
 import TrackCard from '../timeline/TrackCard'
 import * as Tone from 'tone'

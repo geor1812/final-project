@@ -51,7 +51,7 @@ const Login = props => {
         <form onSubmit={handleLogin}>
           <Stack alignItems="center" spacing={3}>
             <Typography variant="h5">LOG IN</Typography>
-            <Typography variant="p">Welcome to name-goes-here</Typography>
+            <Typography variant="p">Welcome to Newbie Steps</Typography>
             <TextField
               required
               sx={{ width: '75%' }}
