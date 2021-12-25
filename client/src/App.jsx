@@ -6,10 +6,10 @@ import styled from 'styled-components'
 import {
   ThemeProvider,
   CssBaseline,
-  Link,
   Grid,
   IconButton,
   Tooltip,
+  Button,
 } from '@mui/material'
 import theme from './theme'
 import PersonIcon from '@mui/icons-material/Person'
@@ -46,23 +46,16 @@ const App = () => {
             <Grid container>
               <Grid direction="row" alignItems="center" container xs={3}>
                 <Tooltip title="Go to this user's page">
-                  <IconButton
+                  <Button
+                    startIcon={<PersonIcon color="secondary" />}
                     color="secondary"
-                    component="span"
+                    variant="text"
+                    size="large"
                     onClick={handleUserIcon}
                   >
-                    <PersonIcon fontSize="large" color="secondary" />
-                  </IconButton>
+                    {sessionStorage.getItem('currentUser')}
+                  </Button>
                 </Tooltip>
-
-                <Link
-                  color="secondary"
-                  href={`/user/${token}`}
-                  underline="hover"
-                  sx={{}}
-                >
-                  {sessionStorage.getItem('currentUser')}
-                </Link>
               </Grid>
               <Grid item style={{ flexGrow: '1' }} />
               <Grid xs={3}>

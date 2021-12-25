@@ -79,7 +79,7 @@ const Login = props => {
               endIcon={<LoginIcon />}
               type="submit"
             >
-              Log in
+              LOG IN
             </Button>
           </Stack>
         </form>
@@ -93,7 +93,7 @@ const Login = props => {
           isSignup(true)
         }}
       >
-        Sign Up
+        SIGN UP
       </Button>
     </>
   )

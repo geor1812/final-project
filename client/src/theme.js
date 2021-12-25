@@ -17,6 +17,11 @@ const theme = createTheme({
       paper: '#461e52',
     },
   },
+  typography: {
+    button: {
+      textTransform: 'none',
+    },
+  },
 })
 
 export default theme

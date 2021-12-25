@@ -7,12 +7,15 @@ import {
   Typography,
   Tooltip,
   IconButton,
+  CardMedia,
+  Stack,
 } from '@mui/material'
 import TrackCard from '../timeline/TrackCard'
 import * as Tone from 'tone'
 import Player from '../player/Player'
 import axios from 'axios'
 import TimelineIcon from '@mui/icons-material/Timeline'
+import text from '../../text'
 
 const User = props => {
   const { token } = props
@@ -28,7 +31,7 @@ const User = props => {
     }
   })
 
-  useEffect(() => {
+  const getUser = () => {
     axios({
       method: 'get',
       url: `${
@@ -37,16 +40,17 @@ const User = props => {
     })
       .then(res => {
         setUser(res.data.account)
+        getTracks(res.data.account.username)
       })
       .catch(error => {
         console.log(error)
       })
-  }, [])
+  }
 
-  useEffect(() => {
+  const getTracks = username => {
     axios({
       method: 'get',
-      url: `${process.env.REACT_APP_API_URL}/tracks`,
+      url: `${process.env.REACT_APP_API_URL}/tracks/username/${username}`,
     })
       .then(res => {
         setTracks(res.data.tracks)
@@ -54,7 +58,11 @@ const User = props => {
       .catch(error => {
         console.log(error)
       })
-  }, [])
+  }
+
+  useEffect(() => {
+    getUser()
+  }, [window.location.pathname])
 
   const handlePlay = () => {
     Tone.start()
@@ -85,7 +93,7 @@ const User = props => {
         <Typography color="primary" variant="h3">
           {user?.username}
         </Typography>
-        <Tooltip title="Back to timeline">
+        <Tooltip title="Go to timeline">
           <IconButton
             color="secondary"
             component="span"
@@ -102,8 +110,13 @@ const User = props => {
         minHeight="80vh"
       >
         <Box sx={{ width: '1000px' }}>
-          <Grid container spacing={5}>
-            {tracks ? (
+          <Grid
+            container
+            alignItems="center"
+            justifyContent="center"
+            spacing={5}
+          >
+            {tracks && tracks.length !== 0 ? (
               tracks.map(track => {
                 return (
                   <Grid item>
@@ -117,7 +130,16 @@ const User = props => {
                 )
               })
             ) : (
-              <div></div>
+              <>
+                <Grid item>
+                  <Typography variant="h5">{text.empty}</Typography>
+                  <CardMedia
+                    component="img"
+                    sx={{ width: '200px', mt: '25px', ml: '45px' }}
+                    image="/sad.png"
+                  />
+                </Grid>
+              </>
             )}
           </Grid>
         </Box>

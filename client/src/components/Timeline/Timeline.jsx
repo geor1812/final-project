@@ -55,7 +55,12 @@ const Timeline = props => {
         minHeight="80vh"
       >
         <Box sx={{ width: '1000px' }}>
-          <Grid container spacing={5}>
+          <Grid
+            container
+            alignItems="center"
+            justifyContent="center"
+            spacing={5}
+          >
             {tracks ? (
               tracks.map(track => {
                 return (
