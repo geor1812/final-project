@@ -25,6 +25,7 @@ const Login = props => {
       .then(res => {
         if (res.data.token) {
           setToken(res.data.token)
+          sessionStorage.setItem('currentUser', res.data.username)
           navigate('/timeline')
         }
       })
@@ -50,7 +51,7 @@ const Login = props => {
         <form onSubmit={handleLogin}>
           <Stack alignItems="center" spacing={3}>
             <Typography variant="h5">LOG IN</Typography>
-            <Typography variant="p">Welcome to name-goes-here</Typography>
+            <Typography variant="p">Welcome to Newbie Steps</Typography>
             <TextField
               required
               sx={{ width: '75%' }}
@@ -78,7 +79,7 @@ const Login = props => {
               endIcon={<LoginIcon />}
               type="submit"
             >
-              Log in
+              LOG IN
             </Button>
           </Stack>
         </form>
@@ -92,7 +93,7 @@ const Login = props => {
           isSignup(true)
         }}
       >
-        Sign Up
+        SIGN UP
       </Button>
     </>
   )

@@ -4,20 +4,22 @@ import {
   Container,
   Box,
   Grid,
-  IconButton,
-  Tooltip,
   Typography,
+  Tooltip,
+  IconButton,
+  CardMedia,
 } from '@mui/material'
-import TrackCard from './TrackCard'
+import TrackCard from '../timeline/TrackCard'
 import * as Tone from 'tone'
 import Player from '../player/Player'
 import axios from 'axios'
-import SchoolIcon from '@mui/icons-material/School'
-import MusicNoteIcon from '@mui/icons-material/MusicNote'
+import TimelineIcon from '@mui/icons-material/Timeline'
+import text from '../../text'
 
-const Timeline = props => {
+const User = props => {
   const { token } = props
   const [tracks, setTracks] = useState()
+  const [user, setUser] = useState()
   const [currentTrack, setCurrentTrack] = useState()
   const [play, setPlay] = useState(0)
   let navigate = useNavigate()
@@ -28,10 +30,26 @@ const Timeline = props => {
     }
   })
 
-  useEffect(() => {
+  const getUser = () => {
     axios({
       method: 'get',
-      url: `http://localhost:9000/tracks`,
+      url: `${
+        process.env.REACT_APP_API_URL
+      }/accounts/${window.location.pathname.slice(6)}`,
+    })
+      .then(res => {
+        setUser(res.data.account)
+        getTracks(res.data.account.username)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }
+
+  const getTracks = username => {
+    axios({
+      method: 'get',
+      url: `${process.env.REACT_APP_API_URL}/tracks/username/${username}`,
     })
       .then(res => {
         setTracks(res.data.tracks)
@@ -39,7 +57,11 @@ const Timeline = props => {
       .catch(error => {
         console.log(error)
       })
-  }, [])
+  }
+
+  useEffect(() => {
+    getUser()
+  }, [window.location.pathname])
 
   const handlePlay = () => {
     Tone.start()
@@ -54,12 +76,8 @@ const Timeline = props => {
     setCurrentTrack(track)
   }
 
-  const handleCreate = () => {
-    navigate('/sequencer')
-  }
-
-  const handleLearn = () => {
-    navigate('/learn')
+  const handleTimelineIcon = () => {
+    navigate('/timeline')
   }
 
   return (
@@ -69,32 +87,20 @@ const Timeline = props => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        flexDirection="row"
+        flexDirection="column"
       >
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          flexDirection="column"
-          sx={{ margin: '40px', mr: '150px', mt: '0px' }}
-        >
-          <IconButton onClick={handleCreate} color="primary">
-            <MusicNoteIcon sx={{ fontSize: '70px' }} />
+        <Typography color="primary" variant="h3">
+          {user?.username}
+        </Typography>
+        <Tooltip title="Go to timeline">
+          <IconButton
+            color="secondary"
+            component="span"
+            onClick={handleTimelineIcon}
+          >
+            <TimelineIcon fontSize="large" color="tertiary" />
           </IconButton>
-          <Typography color="primary">CREATE</Typography>
-        </Box>
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          flexDirection="column"
-          sx={{ margin: '40px', ml: '150px', mt: '0px' }}
-        >
-          <IconButton onClick={handleLearn} color="tertiary">
-            <SchoolIcon sx={{ fontSize: '70px' }} />
-          </IconButton>
-          <Typography color="#dd517e">LEARN</Typography>
-        </Box>
+        </Tooltip>
       </Box>
       <Box
         display="flex"
@@ -109,7 +115,7 @@ const Timeline = props => {
             justifyContent="center"
             spacing={5}
           >
-            {tracks ? (
+            {tracks && tracks.length !== 0 ? (
               tracks.map(track => {
                 return (
                   <Grid item>
@@ -123,7 +129,16 @@ const Timeline = props => {
                 )
               })
             ) : (
-              <div></div>
+              <>
+                <Grid item>
+                  <Typography variant="h5">{text.empty}</Typography>
+                  <CardMedia
+                    component="img"
+                    sx={{ width: '200px', mt: '25px', ml: '45px' }}
+                    image="/sad.png"
+                  />
+                </Grid>
+              </>
             )}
           </Grid>
         </Box>
@@ -132,4 +147,4 @@ const Timeline = props => {
   )
 }
 
-export default Timeline
+export default User

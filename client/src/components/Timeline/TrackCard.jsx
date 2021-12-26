@@ -11,15 +11,20 @@ import {
   ListItem,
   ListItemText,
   Divider,
+  Tooltip,
+  Button,
 } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
 import AddIcon from '@mui/icons-material/Add'
 import NotesIcon from '@mui/icons-material/Notes'
 import * as Tone from 'tone'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+
 
 const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
+  const navigate = useNavigate()
   const [expanded, setExpanded] = useState(false)
   const [paused, setPaused] = useState(true)
 
@@ -49,6 +54,19 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
       handlePlay()
       setPaused(false)
     }
+  }
+
+  const handleUserClick = user => {
+    axios({
+      method: 'get',
+      url: `${process.env.REACT_APP_API_URL}/accounts/username/${user}`,
+    })
+      .then(res => {
+        navigate(`/user/${res.data.account._id}`)
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   return (
@@ -87,9 +105,12 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
               bgcolor: 'background.paper',
             }}
           >
-            <IconButton onClick={handleExpand} aria-label="expand">
-              <NotesIcon sx={{ height: 20, width: 20 }} />
-            </IconButton>
+            <Tooltip title="View layers">
+              <IconButton onClick={handleExpand} aria-label="expand">
+                <NotesIcon sx={{ height: 20, width: 20 }} />
+              </IconButton>
+            </Tooltip>
+
             <IconButton
               onClick={handlePlayAndChangeTrack}
               aria-label="play/pause"
@@ -97,9 +118,11 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
               {playPauseIcons()}
             </IconButton>
             <Link to="/sequencer" state={{ track: track }}>
-              <IconButton aria-label="contribute">
-                <AddIcon sx={{ height: 20, width: 20 }} />
-              </IconButton>
+              <Tooltip title="Contribute">
+                <IconButton aria-label="contribute">
+                  <AddIcon sx={{ height: 20, width: 20 }} />
+                </IconButton>
+              </Tooltip>
             </Link>
           </Box>
         </Box>
@@ -121,7 +144,17 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
               <ListItem>
                 <ListItemText
                   primary={layer.name}
-                  secondary={layer.user}
+                  secondary={
+                    <Button
+                      variant="text"
+                      color="secondary"
+                      onClick={() => {
+                        handleUserClick(layer.user)
+                      }}
+                    >
+                      {layer.user}
+                    </Button>
+                  }
                   sx={{ width: '300px' }}
                 />
                 <ListItemText secondary={layer.instrument} />

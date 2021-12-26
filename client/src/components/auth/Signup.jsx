@@ -159,7 +159,7 @@ const Signup = props => {
               type="submit"
               endIcon={<MusicNoteIcon />}
             >
-              Sign Up
+              SIGN UP
             </Button>
           </Stack>
         </form>
@@ -173,7 +173,7 @@ const Signup = props => {
           isSignup(false)
         }}
       >
-        Log in
+        LOG IN
       </Button>
     </>
   )
