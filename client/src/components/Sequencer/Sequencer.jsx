@@ -20,6 +20,7 @@ import PauseIcon from '@mui/icons-material/Pause'
 import instruments from '../player/instruments.js'
 import Player from '../player/Player'
 import axios from 'axios'
+import { Scale, Note as TonalNote } from '@tonaljs/tonal'
 
 const Sequencer = props => {
   const { token, location } = props
@@ -38,6 +39,9 @@ const Sequencer = props => {
   const [currentTrack, setCurrentTrack] = useState()
   const [numberOfLayers, setNumberOfLayers] = useState()
 
+  const [rootNote, setRootNote] = useState('C')
+  const [scaleType, setScaleType] = useState('Chromatic')
+
   const [title, setTitle] = useState('')
   const [bpm, setBpm] = useState(80)
 
@@ -45,6 +49,9 @@ const Sequencer = props => {
   const [layerName, setLayerName] = useState('')
   const [instrument, setInstrument] = useState('beep')
   const [volume, setVolume] = useState(-25)
+
+  // let step = useRef(0)
+  let [step, setStep] = useState(30)
 
   const notes = [
     'B5',
@@ -124,48 +131,157 @@ const Sequencer = props => {
     }
   }
 
-  const buttons = []
-  let buttonId = 0
-  let previouslyActivatedNotes = []
+  const displayButtons = () => {
+    const buttons = []
+    let buttonId = 0
+    let previouslyActivatedNotes = []
 
-  for (let j = 0; j < 24; j++) {
-    const row = []
-    for (let i = 0; i < 32; i++) {
-      if (state) {
-        previouslyActivatedNotes = new Array(10)
-        state.track.layers.forEach((layer, index) => {
-          layer.sequence.forEach(note => {
-            if (note.id === buttonId) {
-              previouslyActivatedNotes[index] = true
-            }
-          })
-        })
+    console.log(Scale.names())
+
+    // commented out step indicator because it is a big performance hit
+
+    // buttons.push(
+    //   <div style={{ display: 'flex', flexDirection: 'row' }}>
+    //     <div
+    //       style={{
+    //         height: '20px',
+    //         width: '10px',
+    //         flex: 1,
+    //         border: 'none',
+    //         opacity: 0,
+    //       }}
+    //     ></div>
+    //     {displayIndicators()}
+    //   </div>,
+    // )
+
+    for (let j = 0; j < 24; j++) {
+      const row = []
+      const note = notes[j].slice(0, -1)
+      const scale = Scale.get((rootNote + ' ' + scaleType).toLowerCase()).notes
+      let opacity = 0.7
+      if (
+        scale.indexOf(note) > -1 ||
+        scale.indexOf(TonalNote.enharmonic(note)) > -1
+      ) {
+        opacity = 1
       }
-
-      row.push(
-        <Note
-          toggleNoteActivate={toggleNoteActivate}
-          buttonId={buttonId}
-          previouslyActivatedNotes={previouslyActivatedNotes}
-        ></Note>,
+      for (let i = 0; i < 32; i++) {
+        if (state) {
+          previouslyActivatedNotes = new Array(10)
+          state.track.layers.forEach((layer, index) => {
+            layer.sequence.forEach(note => {
+              if (note.id === buttonId) {
+                previouslyActivatedNotes[index] = true
+              }
+            })
+          })
+        }
+        row.push(
+          <Note
+            opacity={opacity}
+            toggleNoteActivate={toggleNoteActivate}
+            buttonId={buttonId}
+            previouslyActivatedNotes={previouslyActivatedNotes}
+          ></Note>,
+        )
+        buttonId += 1
+      }
+      buttons.push(
+        <div style={{ display: 'flex', flexDirection: 'row' }} id={'row' + j}>
+          <div
+            style={{
+              height: '20px',
+              width: '10px',
+              flex: 1,
+              border: 'none',
+            }}
+          >
+            <h1 style={{ fontSize: 10 }}>{notes[j]}</h1>
+          </div>
+          {row}
+        </div>,
       )
-      buttonId += 1
     }
-    buttons.push(
-      <div style={{ display: 'flex', flexDirection: 'row' }} id={'row' + j}>
+    return buttons
+  }
+
+  const displayIndicators = () => {
+    const indicators = []
+    let beatMargin = 0
+
+    for (let i = 0; i < step; i++) {
+      if ((i + 1) % 4 === 1) {
+        beatMargin = 5
+      } else {
+        beatMargin = 0
+      }
+      indicators.push(
         <div
           style={{
+            margin: 2,
+            marginLeft: beatMargin,
+            marginBottom: 3,
             height: '20px',
             width: '10px',
             flex: 1,
             border: 'none',
+            opacity: 0,
           }}
-        >
-          <h1 style={{ fontSize: 10 }}>{notes[j]}</h1>
-        </div>
-        {row}
-      </div>,
+          id={i}
+          key={i}
+        ></div>,
+      )
+    }
+
+    if ((step + 1) % 4 === 1) {
+      beatMargin = 5
+    } else {
+      beatMargin = 0
+    }
+
+    indicators.push(
+      <div
+        style={{
+          backgroundColor: 'orange',
+          margin: 2,
+          marginLeft: beatMargin,
+          marginBottom: 3,
+          height: '20px',
+          width: '10px',
+          flex: 1,
+          border: 'none',
+        }}
+        id={step}
+        key={step}
+      ></div>,
     )
+
+    for (let i = step + 1; i < 32; i++) {
+      if ((i + 1) % 4 === 1) {
+        beatMargin = 5
+      } else {
+        beatMargin = 0
+      }
+
+      indicators.push(
+        <div
+          style={{
+            margin: 2,
+            marginLeft: beatMargin,
+            marginBottom: 3,
+            height: '20px',
+            width: '10px',
+            flex: 1,
+            border: 'none',
+            opacity: 0,
+          }}
+          id={i}
+          key={i}
+        ></div>,
+      )
+    }
+    return indicators
   }
 
   const changeTrack = e => {
@@ -204,6 +320,14 @@ const Sequencer = props => {
     }
   }
 
+  const getStep = () => {
+    setStep((step += 1))
+
+    if (step > 32) {
+      setStep(0)
+    }
+  }
+
   const uploadLayer = event => {
     event.preventDefault()
     console.log(currentTrack)
@@ -231,8 +355,12 @@ const Sequencer = props => {
 
   return (
     <div>
-      <Player track={currentTrack} changeTrack={changeTrack}></Player>
-      {buttons}
+      <Player
+        track={currentTrack}
+        changeTrack={changeTrack}
+        getStep={getStep}
+      ></Player>
+      {displayButtons()}
       <form onSubmit={uploadLayer}>
         {' '}
         <TextField
@@ -298,11 +426,40 @@ const Sequencer = props => {
             aria-label="Volume"
             value={volume}
             onChange={e => setVolume(e.target.value)}
-            min={-30}
+            min={-40}
             max={-20}
           />
           <VolumeUp />
         </Stack>
+        <Select
+          labelId="rootNote"
+          id="rootNote"
+          value={rootNote}
+          label="rootNote"
+          onChange={e => setRootNote(e.target.value)}
+        >
+          {Scale.get('c chromatic').notes.map(note => (
+            <MenuItem value={note}>{note}</MenuItem>
+          ))}
+        </Select>
+        <Select
+          labelId="scaleType"
+          id="scaleType"
+          value={scaleType}
+          label="scaleType"
+          onChange={e => setScaleType(e.target.value)}
+        >
+          <MenuItem value={'Chromatic'}>Chromatic</MenuItem>
+          <MenuItem value={'Major'}>Major</MenuItem>
+          <MenuItem value={'Minor'}>Minor</MenuItem>
+          <MenuItem value={'Major Pentatonic'}>Major Pentatonic</MenuItem>
+          <MenuItem value={'Minor Pentatonic'}>Minor Pentatonic</MenuItem>
+          <MenuItem value={'Lydian'}>Lydian</MenuItem>
+          <MenuItem value={'Dorian'}>Dorian</MenuItem>
+          <MenuItem value={'Mixolydian'}>Mixolydian</MenuItem>
+          <MenuItem value={'Major Blues'}>Major Blues</MenuItem>
+          <MenuItem value={'Minor Blues'}>Minor Blues</MenuItem>
+        </Select>
         <Button
           sx={{ width: '50%' }}
           variant="contained"

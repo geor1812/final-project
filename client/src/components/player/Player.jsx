@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import * as Tone from 'tone'
 import instruments from './instruments.js'
 
-const Player = ({ track, changeTrack }) => {
+const Player = ({ track, changeTrack, getStep }) => {
   let step = useRef(0)
   let synths = useRef([])
 
@@ -62,6 +62,7 @@ const Player = ({ track, changeTrack }) => {
       synthNumber += 1
     }
     step.current = step.current + 1
+    getStep()
     if (step.current > 32) {
       step.current = 0
       if (changeTrack) {

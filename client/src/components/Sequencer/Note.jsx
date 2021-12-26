@@ -1,6 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
-const Note = ({ buttonId, toggleNoteActivate, previouslyActivatedNotes }) => {
+const Note = ({
+  buttonId,
+  toggleNoteActivate,
+  previouslyActivatedNotes,
+  opacity,
+}) => {
   const [activated, setActivated] = useState(false)
   const [color, setColor] = useState('orange')
 
@@ -60,6 +65,7 @@ const Note = ({ buttonId, toggleNoteActivate, previouslyActivatedNotes }) => {
         width: '10px',
         flex: 1,
         border: 'none',
+        opacity: opacity,
       }}
       id={buttonId}
       key={buttonId}
