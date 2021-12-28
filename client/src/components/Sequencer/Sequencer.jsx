@@ -11,8 +11,13 @@ import {
   Select,
   Stack,
   IconButton,
+  Box,
+  Typography,
+  Tooltip,
 } from '@mui/material'
 import LoginIcon from '@mui/icons-material/Login'
+import PianoIcon from '@mui/icons-material/Piano'
+import MusicNoteIcon from '@mui/icons-material/MusicNote'
 import VolumeDown from '@mui/icons-material/VolumeDown'
 import VolumeUp from '@mui/icons-material/VolumeUp'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
@@ -136,7 +141,7 @@ const Sequencer = props => {
     let buttonId = 0
     let previouslyActivatedNotes = []
 
-    console.log(Scale.names())
+    //console.log(Scale.names())
 
     // commented out step indicator because it is a big performance hit
 
@@ -159,7 +164,7 @@ const Sequencer = props => {
       const row = []
       const note = notes[j].slice(0, -1)
       const scale = Scale.get((rootNote + ' ' + scaleType).toLowerCase()).notes
-      let opacity = 0.7
+      let opacity = 0.2
       if (
         scale.indexOf(note) > -1 ||
         scale.indexOf(TonalNote.enharmonic(note)) > -1
@@ -197,7 +202,17 @@ const Sequencer = props => {
               border: 'none',
             }}
           >
-            <h1 style={{ fontSize: 10 }}>{notes[j]}</h1>
+            <Typography
+              color={
+                scale.indexOf(note) > -1 ||
+                scale.indexOf(TonalNote.enharmonic(note)) > -1
+                  ? 'white'
+                  : '#808080'
+              }
+              variant="text"
+            >
+              {notes[j]}
+            </Typography>
           </div>
           {row}
         </div>,
@@ -330,7 +345,6 @@ const Sequencer = props => {
 
   const uploadLayer = event => {
     event.preventDefault()
-    console.log(currentTrack)
     axios({
       method: 'post',
       url: 'http://localhost:9000/tracks/',
@@ -360,7 +374,112 @@ const Sequencer = props => {
         changeTrack={changeTrack}
         getStep={getStep}
       ></Player>
-      {displayButtons()}
+      <Box
+        sx={{
+          padding: '10px',
+          mb: '25px',
+        }}
+        flex
+        flexDirection="column"
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            mb: '10px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <Tooltip title="Instrument">
+              <MusicNoteIcon sx={{ fontSize: '40px', mr: '15px' }} />
+            </Tooltip>
+            <Select
+              labelId="instrument"
+              id="instrument"
+              size="small"
+              value={instrument}
+              label="Instrument"
+              variant="standard"
+              onChange={e => setInstrument(e.target.value)}
+            >
+              {instruments.map(instrument => {
+                return (
+                  <MenuItem value={instrument.name}>{instrument.name}</MenuItem>
+                )
+              })}
+            </Select>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <Tooltip title="Scale">
+              <PianoIcon sx={{ fontSize: '40px', mr: '15px' }} />
+            </Tooltip>
+            <Select
+              labelId="rootNote"
+              id="rootNote"
+              value={rootNote}
+              label="Root Note"
+              variant="standard"
+              onChange={e => setRootNote(e.target.value)}
+              sx={{ mr: '5px' }}
+            >
+              {Scale.get('c chromatic').notes.map(note => (
+                <MenuItem value={note}>{note}</MenuItem>
+              ))}
+            </Select>
+            <Select
+              labelId="scaleType"
+              id="scaleType"
+              value={scaleType}
+              label="Scale Type"
+              variant="standard"
+              onChange={e => setScaleType(e.target.value)}
+            >
+              <MenuItem value={'Chromatic'}>Chromatic</MenuItem>
+              <MenuItem value={'Major'}>Major</MenuItem>
+              <MenuItem value={'Minor'}>Minor</MenuItem>
+              <MenuItem value={'Major Pentatonic'}>Major Pentatonic</MenuItem>
+              <MenuItem value={'Minor Pentatonic'}>Minor Pentatonic</MenuItem>
+              <MenuItem value={'Lydian'}>Lydian</MenuItem>
+              <MenuItem value={'Dorian'}>Dorian</MenuItem>
+              <MenuItem value={'Mixolydian'}>Mixolydian</MenuItem>
+              <MenuItem value={'Major Blues'}>Major Blues</MenuItem>
+              <MenuItem value={'Minor Blues'}>Minor Blues</MenuItem>
+            </Select>
+          </div>
+          <Stack
+            spacing={2}
+            direction="row"
+            sx={{ mb: 1, mr: '7px' }}
+            alignItems="center"
+          >
+            <VolumeDown />
+            <Slider
+              sx={{ width: '150px' }}
+              aria-label="Volume"
+              value={volume}
+              onChange={e => setVolume(e.target.value)}
+              min={-40}
+              max={-20}
+            />
+            <VolumeUp />
+          </Stack>
+        </Box>
+        <Box sx={{ pl: '10px', pr: '10px' }}>{displayButtons()}</Box>
+      </Box>
+
       <form onSubmit={uploadLayer}>
         {' '}
         <TextField
@@ -407,59 +526,6 @@ const Sequencer = props => {
           {playPauseIcons()}
         </IconButton>
         <InputLabel id="instrument">Instrument</InputLabel>
-        <Select
-          labelId="instrument"
-          id="instrument"
-          value={instrument}
-          label="instrument"
-          onChange={e => setInstrument(e.target.value)}
-        >
-          {instruments.map(instrument => {
-            return (
-              <MenuItem value={instrument.name}>{instrument.name}</MenuItem>
-            )
-          })}
-        </Select>
-        <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
-          <VolumeDown />
-          <Slider
-            aria-label="Volume"
-            value={volume}
-            onChange={e => setVolume(e.target.value)}
-            min={-40}
-            max={-20}
-          />
-          <VolumeUp />
-        </Stack>
-        <Select
-          labelId="rootNote"
-          id="rootNote"
-          value={rootNote}
-          label="rootNote"
-          onChange={e => setRootNote(e.target.value)}
-        >
-          {Scale.get('c chromatic').notes.map(note => (
-            <MenuItem value={note}>{note}</MenuItem>
-          ))}
-        </Select>
-        <Select
-          labelId="scaleType"
-          id="scaleType"
-          value={scaleType}
-          label="scaleType"
-          onChange={e => setScaleType(e.target.value)}
-        >
-          <MenuItem value={'Chromatic'}>Chromatic</MenuItem>
-          <MenuItem value={'Major'}>Major</MenuItem>
-          <MenuItem value={'Minor'}>Minor</MenuItem>
-          <MenuItem value={'Major Pentatonic'}>Major Pentatonic</MenuItem>
-          <MenuItem value={'Minor Pentatonic'}>Minor Pentatonic</MenuItem>
-          <MenuItem value={'Lydian'}>Lydian</MenuItem>
-          <MenuItem value={'Dorian'}>Dorian</MenuItem>
-          <MenuItem value={'Mixolydian'}>Mixolydian</MenuItem>
-          <MenuItem value={'Major Blues'}>Major Blues</MenuItem>
-          <MenuItem value={'Minor Blues'}>Minor Blues</MenuItem>
-        </Select>
         <Button
           sx={{ width: '50%' }}
           variant="contained"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-
+import { Box } from '@mui/material'
+import styled from 'styled-components'
 const Note = ({
   buttonId,
   toggleNoteActivate,
@@ -7,13 +8,13 @@ const Note = ({
   opacity,
 }) => {
   const [activated, setActivated] = useState(false)
-  const [color, setColor] = useState('orange')
+  const [color, setColor] = useState('#e58e35')
 
   const toggleNoteActivateAndChangeColor = e => {
     if (!activated) {
-      setColor('blue')
+      setColor('#7a98ee')
     } else {
-      setColor('orange')
+      setColor('#e58e35')
     }
     setActivated(!activated)
     toggleNoteActivate(e)
@@ -49,30 +50,35 @@ const Note = ({
     return noteIndicators
   }
 
-  let beatMargin = 0
+  let beatMargin = '0 px'
   if ((buttonId + 1) % 4 === 1) {
-    beatMargin = 5
+    beatMargin = '25px'
   }
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         backgroundColor: color,
-        margin: 2,
+        boxShadow: activated ? '0px 0px 10px #7a98ee' : 'none',
+        margin: '3px',
         marginLeft: beatMargin,
-        marginBottom: 3,
+        mb: '3px',
         height: '20px',
-        width: '10px',
         flex: 1,
         border: 'none',
-        opacity: opacity,
+        opacity: activated ? 1 : opacity,
+        padding: '0px',
+        '&:hover': {
+          boxShadow: '0px 0px 10px #dd517e',
+          backgroundColor: '#dd517e',
+        },
       }}
       id={buttonId}
       key={buttonId}
       onClick={e => toggleNoteActivateAndChangeColor(e)}
     >
       {showPreviouslyActivatedNotes()}
-    </div>
+    </Box>
   )
 }
 

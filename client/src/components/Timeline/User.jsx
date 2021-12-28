@@ -9,7 +9,7 @@ import {
   IconButton,
   CardMedia,
 } from '@mui/material'
-import TrackCard from '../timeline/TrackCard'
+import TrackCard from './TrackCard'
 import * as Tone from 'tone'
 import Player from '../player/Player'
 import axios from 'axios'
