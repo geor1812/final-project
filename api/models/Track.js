@@ -13,6 +13,10 @@ const trackSchema = new mongoose.Schema({
     type: Object,
     required: true,
   },
+  imgUrl: {
+    type: String,
+    required: false,
+  },
 })
 
 module.exports = mongoose.model('Track', trackSchema)

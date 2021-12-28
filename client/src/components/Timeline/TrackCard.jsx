@@ -22,6 +22,7 @@ import * as Tone from 'tone'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
+const DEFAULT_PICTURE_URL = '/neon.png'
 
 const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
   const navigate = useNavigate()
@@ -129,7 +130,7 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
         <CardMedia
           component="img"
           sx={{ width: 150, height: 150, padding: '6px' }}
-          image="https://eskipaper.com/images/fruit-background-2.jpg"
+          image={track.imgUrl ? track.imgUrl : DEFAULT_PICTURE_URL}
         />
       </Box>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
