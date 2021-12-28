@@ -80,13 +80,29 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
       }}
     >
       <Box sx={{ display: 'flex', backgroundColor: '#461e52' }}>
+        <CardMedia
+          component="img"
+          sx={{
+            width: 150,
+            height: 150,
+            padding: '6px',
+            boxShadow: '0px 0px 15px 10px #170a1c',
+          }}
+          image={track.imgUrl ? track.imgUrl : DEFAULT_PICTURE_URL}
+        />
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'column',
+            boxShadow: '0px 0px 15px 10px #170a1c',
           }}
         >
-          <CardContent sx={{ width: '300px', bgcolor: 'background.paper' }}>
+          <CardContent
+            sx={{
+              width: '300px',
+              bgcolor: 'background.paper',
+            }}
+          >
             <Typography component="div" variant="h5">
               {track.title}
             </Typography>
@@ -127,22 +143,22 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
             </Link>
           </Box>
         </Box>
-        <CardMedia
-          component="img"
-          sx={{ width: 150, height: 150, padding: '6px' }}
-          image={track.imgUrl ? track.imgUrl : DEFAULT_PICTURE_URL}
-        />
       </Box>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent sx={{ padding: 0, bgcolor: 'background.paper' }}>
-          <Divider sx={{ borderBottomWidth: '3px' }} />
+        <CardContent
+          sx={{
+            padding: 0,
+            bgcolor: 'background.paper',
+            boxShadow: '0px 0px 15px 10px #170a1c',
+          }}
+        >
           {track.layers.map(layer => (
             <List
               sx={{
                 maxWidth: '300px',
               }}
             >
-              <ListItem>
+              <ListItem sx={{ padding: '0px', pl: '16px' }}>
                 <ListItemText
                   primary={layer.name}
                   secondary={

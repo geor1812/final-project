@@ -29,6 +29,10 @@ const Timeline = props => {
   })
 
   useEffect(() => {
+    Tone.Transport.stop()
+  }, [window.location.pathname])
+
+  useEffect(() => {
     axios({
       method: 'get',
       url: `http://localhost:9000/tracks`,

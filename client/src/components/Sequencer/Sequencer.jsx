@@ -105,6 +105,10 @@ const Sequencer = props => {
   })
 
   useEffect(() => {
+    Tone.Transport.stop()
+  }, [window.location.pathname])
+
+  useEffect(() => {
     const initialButtonArray = []
     for (let j = 0; j < 25; j++) {
       for (let i = 0; i < 32; i++) {
@@ -360,11 +364,40 @@ const Sequencer = props => {
 
   const uploadLayer = event => {
     event.preventDefault()
+    const sequence = buttonArray.filter(button => {
+      return button.activated
+    })
+
+    const layer = {
+      name: layerName,
+      sequence: sequence,
+      instrument: instrument,
+      volume: volume,
+      user: username,
+    }
+
+    const layers = [...currentTrack.layers]
+
+    if (layers.length > numberOfLayers) {
+      layers.pop()
+    }
+    layers.push(layer)
+
+    const newTrack = {
+      title: title,
+      bpm: bpm,
+      layers: layers,
+      imgUrl: imgUrl,
+    }
     axios({
       method: 'post',
       url: 'http://localhost:9000/tracks/',
-      data: currentTrack,
+      data: newTrack,
     })
+      .then(res => {
+        Tone.Transport.stop()
+        navigate('/timeline')
+      })
       // .then(res => {
       //   if (res.data.createdTrack) {
       //     setAlert({
@@ -392,8 +425,6 @@ const Sequencer = props => {
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -509,7 +540,7 @@ const Sequencer = props => {
                     maxWidth: '300px',
                   }}
                 >
-                  <ListItem>
+                  <ListItem sx={{ padding: '0px', pl: '16px' }}>
                     <ListItemText
                       primary={layer.name}
                       secondary={

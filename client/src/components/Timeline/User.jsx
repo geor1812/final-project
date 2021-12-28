@@ -60,6 +60,7 @@ const User = props => {
   }
 
   useEffect(() => {
+    Tone.Transport.stop()
     getUser()
   }, [window.location.pathname])
 
