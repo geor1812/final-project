@@ -50,8 +50,8 @@ const Sequencer = props => {
   const [instrument, setInstrument] = useState('beep')
   const [volume, setVolume] = useState(-25)
 
-  // let step = useRef(0)
-  let [step, setStep] = useState(30)
+  let step = useRef(0)
+  // let [step, setStep] = useState(30)
 
   const notes = [
     'B5',
@@ -136,8 +136,6 @@ const Sequencer = props => {
     let buttonId = 0
     let previouslyActivatedNotes = []
 
-    console.log(Scale.names())
-
     // commented out step indicator because it is a big performance hit
 
     // buttons.push(
@@ -157,8 +155,11 @@ const Sequencer = props => {
 
     for (let j = 0; j < 24; j++) {
       const row = []
-      const note = notes[j].slice(0, -1)
-      const scale = Scale.get((rootNote + ' ' + scaleType).toLowerCase()).notes
+      let note = notes[j].slice(0, -1)
+      note = TonalNote.simplify(note)
+      let scale = Scale.get((rootNote + ' ' + scaleType).toLowerCase()).notes
+      scale = scale.map(note => TonalNote.simplify(note))
+      console.log(scale)
       let opacity = 0.7
       if (
         scale.indexOf(note) > -1 ||
@@ -210,7 +211,7 @@ const Sequencer = props => {
     const indicators = []
     let beatMargin = 0
 
-    for (let i = 0; i < step; i++) {
+    for (let i = 0; i < step.current; i++) {
       if ((i + 1) % 4 === 1) {
         beatMargin = 5
       } else {
@@ -234,7 +235,7 @@ const Sequencer = props => {
       )
     }
 
-    if ((step + 1) % 4 === 1) {
+    if ((step.current + 1) % 4 === 1) {
       beatMargin = 5
     } else {
       beatMargin = 0
@@ -252,12 +253,12 @@ const Sequencer = props => {
           flex: 1,
           border: 'none',
         }}
-        id={step}
-        key={step}
+        id={step.current}
+        key={step.current}
       ></div>,
     )
 
-    for (let i = step + 1; i < 32; i++) {
+    for (let i = step.current + 1; i < 32; i++) {
       if ((i + 1) % 4 === 1) {
         beatMargin = 5
       } else {
@@ -321,10 +322,13 @@ const Sequencer = props => {
   }
 
   const getStep = () => {
-    setStep((step += 1))
-
-    if (step > 32) {
-      setStep(0)
+    // setStep((step += 1))
+    // if (step > 32) {
+    //   setStep(0)
+    // }
+    step.current += 1
+    if (step.current > 32) {
+      step.current = 0
     }
   }
 

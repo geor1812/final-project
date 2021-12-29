@@ -37,7 +37,7 @@ const Player = ({ track, changeTrack, getStep }) => {
       Tone.Transport.cancel()
       Tone.Transport.start()
       Tone.Transport.scheduleRepeat(repeat, '16n')
-      Tone.Transport.bpm.value = 80
+      Tone.Transport.bpm.value = track.bpm
     }
   }, [track])
 
@@ -62,7 +62,9 @@ const Player = ({ track, changeTrack, getStep }) => {
       synthNumber += 1
     }
     step.current = step.current + 1
-    getStep()
+    if (getStep) {
+      getStep()
+    }
     if (step.current > 32) {
       step.current = 0
       if (changeTrack) {
