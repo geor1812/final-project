@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
   try {
     let tracks
     tracks = await Track.find()
-    res.send({ tracks: tracks })
+    res.send({ tracks: tracks.reverse() })
   } catch (error) {
     res.status(500).send({ error: error.message })
   }
@@ -25,7 +25,7 @@ router.get('/username/:username', async (req, res) => {
     const filteredTracks = tracks.filter(track =>
       track.layers.some(layer => layer.user === req.params.username),
     )
-    res.status(200).send({ tracks: filteredTracks })
+    res.status(200).send({ tracks: filteredTracks.reverse() })
   } catch {
     res.status(500).send({ error: error.message })
   }
@@ -37,6 +37,7 @@ router.post('', async (req, res) => {
     title: req.body.title,
     bpm: req.body.bpm,
     layers: req.body.layers,
+    imgUrl: req.body.imgUrl,
   })
   console.log(track)
 

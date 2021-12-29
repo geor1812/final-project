@@ -20,7 +20,7 @@ import Home from './components/Home'
 import Timeline from './components/timeline/Timeline'
 import Auth from './components/auth/Auth'
 import Sequencer from './components/sequencer/Sequencer'
-import User from './components/user/User'
+import User from './components/timeline/User'
 
 const App = () => {
   //Custom auth token hook

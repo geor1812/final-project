@@ -10,20 +10,28 @@ import {
   List,
   ListItem,
   ListItemText,
-  Divider,
   Tooltip,
   Button,
 } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
+import CloseIcon from '@mui/icons-material/Close'
 import AddIcon from '@mui/icons-material/Add'
 import NotesIcon from '@mui/icons-material/Notes'
 import * as Tone from 'tone'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
+const DEFAULT_PICTURE_URL = '/neon.png'
 
-const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
+const TrackCard = ({
+  track,
+  handlePlay,
+  changeCurrentTrack,
+  handlePause,
+  handleDelete,
+  deletePermission,
+}) => {
   const navigate = useNavigate()
   const [expanded, setExpanded] = useState(false)
   const [paused, setPaused] = useState(true)
@@ -79,16 +87,33 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
       }}
     >
       <Box sx={{ display: 'flex', backgroundColor: '#461e52' }}>
+        <CardMedia
+          component="img"
+          sx={{
+            width: 150,
+            height: 150,
+            padding: '6px',
+            boxShadow: '0px 0px 15px 10px #170a1c',
+          }}
+          image={track.imgUrl ? track.imgUrl : DEFAULT_PICTURE_URL}
+        />
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'column',
+            boxShadow: '0px 0px 15px 10px #170a1c',
           }}
         >
-          <CardContent sx={{ width: '300px', bgcolor: 'background.paper' }}>
+          <CardContent
+            sx={{
+              width: '300px',
+              bgcolor: 'background.paper',
+            }}
+          >
             <Typography component="div" variant="h5">
               {track.title}
             </Typography>
+
             <Typography
               variant="subtitle1"
               color="text.secondary"
@@ -124,24 +149,35 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
                 </IconButton>
               </Tooltip>
             </Link>
+            {deletePermission ? (
+              <Tooltip title="Delete track">
+                <IconButton
+                  onClick={() => {
+                    handleDelete(track._id)
+                  }}
+                >
+                  <CloseIcon sx={{ height: 20, width: 20, color: '#bd0d00' }} />
+                </IconButton>
+              </Tooltip>
+            ) : null}
           </Box>
         </Box>
-        <CardMedia
-          component="img"
-          sx={{ width: 150, height: 150, padding: '6px' }}
-          image="https://eskipaper.com/images/fruit-background-2.jpg"
-        />
       </Box>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent sx={{ padding: 0, bgcolor: 'background.paper' }}>
-          <Divider sx={{ borderBottomWidth: '3px' }} />
+        <CardContent
+          sx={{
+            padding: 0,
+            bgcolor: 'background.paper',
+            boxShadow: '0px 0px 15px 10px #170a1c',
+          }}
+        >
           {track.layers.map(layer => (
             <List
               sx={{
                 maxWidth: '300px',
               }}
             >
-              <ListItem>
+              <ListItem sx={{ padding: '0px', pl: '16px' }}>
                 <ListItemText
                   primary={layer.name}
                   secondary={

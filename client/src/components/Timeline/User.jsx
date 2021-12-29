@@ -9,7 +9,7 @@ import {
   IconButton,
   CardMedia,
 } from '@mui/material'
-import TrackCard from '../timeline/TrackCard'
+import TrackCard from './TrackCard'
 import * as Tone from 'tone'
 import Player from '../player/Player'
 import axios from 'axios'
@@ -23,6 +23,7 @@ const User = props => {
   const [currentTrack, setCurrentTrack] = useState()
   const [play, setPlay] = useState(0)
   let navigate = useNavigate()
+  const deletePermission = user?._id === token ? true : false
 
   useEffect(() => {
     if (!token) {
@@ -60,6 +61,7 @@ const User = props => {
   }
 
   useEffect(() => {
+    Tone.Transport.stop()
     getUser()
   }, [window.location.pathname])
 
@@ -78,6 +80,19 @@ const User = props => {
 
   const handleTimelineIcon = () => {
     navigate('/timeline')
+  }
+
+  const handleDelete = id => {
+    axios({
+      method: 'delete',
+      url: `${process.env.REACT_APP_API_URL}/tracks/${id}`,
+    })
+      .then(res => {
+        window.location.reload()
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   return (
@@ -116,14 +131,16 @@ const User = props => {
             spacing={5}
           >
             {tracks && tracks.length !== 0 ? (
-              tracks.map(track => {
+              tracks?.map(track => {
                 return (
                   <Grid item>
                     <TrackCard
+                      deletePermission={deletePermission}
                       track={track}
                       handlePlay={handlePlay}
                       changeCurrentTrack={changeCurrentTrack}
                       handlePause={handlePause}
+                      handleDelete={handleDelete}
                     />
                   </Grid>
                 )
