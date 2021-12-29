@@ -23,6 +23,7 @@ const User = props => {
   const [currentTrack, setCurrentTrack] = useState()
   const [play, setPlay] = useState(0)
   let navigate = useNavigate()
+  const deletePermission = user?._id === token ? true : false
 
   useEffect(() => {
     if (!token) {
@@ -81,6 +82,19 @@ const User = props => {
     navigate('/timeline')
   }
 
+  const handleDelete = id => {
+    axios({
+      method: 'delete',
+      url: `${process.env.REACT_APP_API_URL}/tracks/${id}`,
+    })
+      .then(res => {
+        window.location.reload()
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }
+
   return (
     <Container>
       <Player track={currentTrack} play={play}></Player>
@@ -117,14 +131,16 @@ const User = props => {
             spacing={5}
           >
             {tracks && tracks.length !== 0 ? (
-              tracks.map(track => {
+              tracks?.map(track => {
                 return (
                   <Grid item>
                     <TrackCard
+                      deletePermission={deletePermission}
                       track={track}
                       handlePlay={handlePlay}
                       changeCurrentTrack={changeCurrentTrack}
                       handlePause={handlePause}
+                      handleDelete={handleDelete}
                     />
                   </Grid>
                 )

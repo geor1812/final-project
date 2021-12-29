@@ -10,12 +10,12 @@ import {
   List,
   ListItem,
   ListItemText,
-  Divider,
   Tooltip,
   Button,
 } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
+import CloseIcon from '@mui/icons-material/Close'
 import AddIcon from '@mui/icons-material/Add'
 import NotesIcon from '@mui/icons-material/Notes'
 import * as Tone from 'tone'
@@ -24,7 +24,14 @@ import axios from 'axios'
 
 const DEFAULT_PICTURE_URL = '/neon.png'
 
-const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
+const TrackCard = ({
+  track,
+  handlePlay,
+  changeCurrentTrack,
+  handlePause,
+  handleDelete,
+  deletePermission,
+}) => {
   const navigate = useNavigate()
   const [expanded, setExpanded] = useState(false)
   const [paused, setPaused] = useState(true)
@@ -106,6 +113,7 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
             <Typography component="div" variant="h5">
               {track.title}
             </Typography>
+
             <Typography
               variant="subtitle1"
               color="text.secondary"
@@ -141,6 +149,17 @@ const TrackCard = ({ track, handlePlay, changeCurrentTrack, handlePause }) => {
                 </IconButton>
               </Tooltip>
             </Link>
+            {deletePermission ? (
+              <Tooltip title="Delete track">
+                <IconButton
+                  onClick={() => {
+                    handleDelete(track._id)
+                  }}
+                >
+                  <CloseIcon sx={{ height: 20, width: 20, color: '#bd0d00' }} />
+                </IconButton>
+              </Tooltip>
+            ) : null}
           </Box>
         </Box>
       </Box>
