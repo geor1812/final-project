@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import * as Tone from 'tone'
 import Note from './Note'
@@ -34,6 +34,7 @@ import axios from 'axios'
 import { Scale, Note as TonalNote } from '@tonaljs/tonal'
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline'
 import DoneIcon from '@mui/icons-material/Done'
+import { BedTwoTone } from '@mui/icons-material'
 const DEFAULT_PICTURE_URL = '/neon.png'
 
 const Sequencer = props => {
@@ -63,15 +64,7 @@ const Sequencer = props => {
   const [layerName, setLayerName] = useState('')
   const [instrument, setInstrument] = useState('beep')
   const [volume, setVolume] = useState(-25)
-<<<<<<< HEAD
-
-  let step = useRef(0)
-  // let [step, setStep] = useState(30)
-=======
   const [imgUrl, setImgUrl] = useState()
-  // let step = useRef(0)
-  let [step, setStep] = useState(30)
->>>>>>> e9a81c4b5fbece7735b360fadeaf79c7be7f2e4a
 
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
@@ -151,7 +144,6 @@ const Sequencer = props => {
   }, [])
 
   const toggleNoteActivate = e => {
-    Tone.start()
     const newButtonArray = buttonArray.map(note => note)
     const id = e.target.id
     if (newButtonArray[id]) {
@@ -165,42 +157,14 @@ const Sequencer = props => {
     let buttonId = 0
     let previouslyActivatedNotes = []
 
-<<<<<<< HEAD
-=======
-    //console.log(Scale.names())
-
->>>>>>> e9a81c4b5fbece7735b360fadeaf79c7be7f2e4a
-    // commented out step indicator because it is a big performance hit
-
-    // buttons.push(
-    //   <div style={{ display: 'flex', flexDirection: 'row' }}>
-    //     <div
-    //       style={{
-    //         height: '20px',
-    //         width: '10px',
-    //         flex: 1,
-    //         border: 'none',
-    //         opacity: 0,
-    //       }}
-    //     ></div>
-    //     {displayIndicators()}
-    //   </div>,
-    // )
-
     for (let j = 0; j < 24; j++) {
       const row = []
-<<<<<<< HEAD
       let note = notes[j].slice(0, -1)
       note = TonalNote.simplify(note)
       let scale = Scale.get((rootNote + ' ' + scaleType).toLowerCase()).notes
       scale = scale.map(note => TonalNote.simplify(note))
       console.log(scale)
       let opacity = 0.7
-=======
-      const note = notes[j].slice(0, -1)
-      const scale = Scale.get((rootNote + ' ' + scaleType).toLowerCase()).notes
-      let opacity = 0.2
->>>>>>> e9a81c4b5fbece7735b360fadeaf79c7be7f2e4a
       if (
         scale.indexOf(note) > -1 ||
         scale.indexOf(TonalNote.enharmonic(note)) > -1
@@ -257,84 +221,6 @@ const Sequencer = props => {
     return buttons
   }
 
-  const displayIndicators = () => {
-    const indicators = []
-    let beatMargin = 0
-
-    for (let i = 0; i < step.current; i++) {
-      if ((i + 1) % 4 === 1) {
-        beatMargin = 5
-      } else {
-        beatMargin = 0
-      }
-      indicators.push(
-        <div
-          style={{
-            margin: 2,
-            marginLeft: beatMargin,
-            marginBottom: 3,
-            height: '20px',
-            width: '10px',
-            flex: 1,
-            border: 'none',
-            opacity: 0,
-          }}
-          id={i}
-          key={i}
-        ></div>,
-      )
-    }
-
-    if ((step.current + 1) % 4 === 1) {
-      beatMargin = 5
-    } else {
-      beatMargin = 0
-    }
-
-    indicators.push(
-      <div
-        style={{
-          backgroundColor: 'orange',
-          margin: 2,
-          marginLeft: beatMargin,
-          marginBottom: 3,
-          height: '20px',
-          width: '10px',
-          flex: 1,
-          border: 'none',
-        }}
-        id={step.current}
-        key={step.current}
-      ></div>,
-    )
-
-    for (let i = step.current + 1; i < 32; i++) {
-      if ((i + 1) % 4 === 1) {
-        beatMargin = 5
-      } else {
-        beatMargin = 0
-      }
-
-      indicators.push(
-        <div
-          style={{
-            margin: 2,
-            marginLeft: beatMargin,
-            marginBottom: 3,
-            height: '20px',
-            width: '10px',
-            flex: 1,
-            border: 'none',
-            opacity: 0,
-          }}
-          id={i}
-          key={i}
-        ></div>,
-      )
-    }
-    return indicators
-  }
-
   const changeTrack = () => {
     const sequence = buttonArray.filter(button => {
       return button.activated
@@ -369,17 +255,6 @@ const Sequencer = props => {
       return <PlayArrowIcon color="primary" sx={{ height: 38, width: 38 }} />
     } else {
       return <PauseIcon color="primary" sx={{ height: 38, width: 38 }} />
-    }
-  }
-
-  const getStep = () => {
-    // setStep((step += 1))
-    // if (step > 32) {
-    //   setStep(0)
-    // }
-    step.current += 1
-    if (step.current > 32) {
-      step.current = 0
     }
   }
 
@@ -438,11 +313,6 @@ const Sequencer = props => {
 
   return (
     <div>
-      <Player
-        track={currentTrack}
-        changeTrack={changeTrack}
-        getStep={getStep}
-      ></Player>
       <Modal
         open={open}
         onClose={handleClose}
@@ -718,6 +588,20 @@ const Sequencer = props => {
             />
             <VolumeUp />
           </Stack>
+        </Box>
+
+        <Box sx={{ pl: '10px', pr: '10px' }}>
+          <div
+            style={{
+              height: '20px',
+              width: '10px',
+              flex: 1,
+              border: 'none',
+            }}
+          ></div>{' '}
+          <div>
+            <Player track={currentTrack} changeTrack={changeTrack}></Player>
+          </div>
         </Box>
         <Box sx={{ pl: '10px', pr: '10px' }}>{displayButtons()}</Box>
       </Box>
