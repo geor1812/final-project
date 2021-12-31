@@ -21,6 +21,7 @@ import Timeline from './components/timeline/Timeline'
 import Auth from './components/auth/Auth'
 import Sequencer from './components/sequencer/Sequencer'
 import User from './components/timeline/User'
+import Learn from './components/Learn'
 
 const App = () => {
   //Custom auth token hook
@@ -93,6 +94,7 @@ const App = () => {
           <Route exact path="/timeline" element={<Timeline token={token} />} />
           <Route path="/auth" element={<Auth setToken={setToken} />} />
           <Route path="/user/:id" element={<User token={token} />} />
+          <Route path="/learn" element={<Learn />} />
         </Routes>
       </Wrapper>
     </ThemeProvider>
