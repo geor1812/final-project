@@ -47,6 +47,18 @@ const Note = ({
         ></div>,
       )
     }
+    if (previouslyActivatedNotes[2]) {
+      noteIndicators.push(
+        <div
+          style={{
+            backgroundColor: 'lightblue',
+            height: '5px',
+            width: '5px',
+            border: 'none',
+          }}
+        ></div>,
+      )
+    }
     return noteIndicators
   }
 
