@@ -17,6 +17,7 @@ const Learn = () => {
   let navigate = useNavigate()
   let pageContent = [
     {
+      title: `The sequencer`,
       mainText: `Newbie Steps core component is a "step sequencer", a common tool
       you will come across on almost all digital audio workstations.
       In a step sequencer, horizontal placement determines at which
@@ -30,35 +31,44 @@ const Learn = () => {
       call this division a 16th note. Our step sequencer is 2 bars
       long, giving you 8 beats and 32 16th notes.`,
       image: '/subdivisions.png',
-      buttonText: 'Next Page',
+      textButton1: 'Back to timeline',
+      textButton2: 'Next',
     },
     {
+      title: `Scale selector`,
       mainText: `Something not so common to see in a step sequencer is a scale selector. A scale is a set of pitches(notes) and the distance between these pitches 
       give a particular sound. By default, the sequencer displays a chromatic scale, ie every note on a piano. Selecting a scale will highlight
       only the notes in that scale, making it easier to develop a musical sounding melody. Different scales have different emotional impacts on the
       listener. Try out some different scales and see which ones you like the sound of.`,
       secondText: ``,
       image: '/scale-selector.png',
-      buttonText: 'Next Page',
+      textButton1: 'Back',
+      textButton2: 'Next',
     },
     {
-      mainText: `The toolbar also contains an instrument selector, pause button, upload button and a BPM selector. BPM (beats per minute) refers to the tempo of a song, the higher the bpm the faster the song.`,
-      secondText: ``,
+      title: `Sequencer utilities`,
+      mainText: `The toolbar also contains an instrument selector, a play/pause button, an upload button and a BPM selector.`,
+      secondText: `The instrument selector lets you choose between different instrument presets, allowing you to change how the current layer you're working on sound. The play/pause button requires no explanation. The upload button will open up a pop-up where you can name the track and the current layer while also allowing you to choose an image for your track, and see all relevant information. BPM refers to beats per minute, meaning that increasing the number will increase the speed of the song.`,
       image: '/toolbar.png',
-      buttonText: 'Next Page',
+      textButton1: 'Back',
+      textButton2: 'Next',
     },
     {
+      title: `Collaborating with others`,
       mainText: `Newbie Steps is a collaborative app, users create songs by layering on top of other users ideas.`,
-      secondText: `The timeline shows all these ideas/tracks, from here you can play a song, see the users that worked on it or add your own layer`,
+      secondText: `The timeline shows all these ideas/tracks, from here you can explore the most recent songs made using our app. While scrolling through the timeline you will notice you can press the "View Layers" button which will expand the track card and show information on all existing layers, allowing you to see which instruments were used and who worked on the layers. You will also notice the "Contribute" button, which if pressed will take you to the step sequencer and allow you to add another layer on top of the already existing ones.`,
       image: '/timeline.png',
-      buttonText: 'Next Page',
+      textButton1: 'Back',
+      textButton2: 'Next',
     },
     {
+      title: `Previous layers`,
       mainText: `When you choose to contribute to a track, the notes that are activated in previous layers are indicated with a small coloured box.`,
       secondText: `This is a useful tool for creating melodies that compliment each other. You can try landing on the same notes at times or creating chords built up of different instruments
       but most of all, remember to use your ears. Have Fun!`,
       image: '/layers.png',
-      buttonText: 'Start',
+      textButton1: 'Back',
+      textButton2: 'Start creating',
     },
   ]
 
@@ -66,10 +76,18 @@ const Learn = () => {
 
   const nextPage = () => {
     if (pageNumber === pageContent.length - 1) {
-      navigate('/timeline')
+      navigate('/sequencer')
       setPageNumber(0)
     }
     setPageNumber(pageNumber + 1)
+  }
+
+  const prevPage = () => {
+    if (pageNumber === 0) {
+      navigate('/timeline')
+      setPageNumber(0)
+    }
+    setPageNumber(pageNumber - 1)
   }
   return (
     <Container>
@@ -77,13 +95,28 @@ const Learn = () => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        minHeight="100vh"
+        flexDirection="column"
+      >
+        <Typography
+          sx={{ textShadow: '10px 10px 10px #170a1c', mb: '15px' }}
+          color="primary"
+          variant="h2"
+        >
+          Learning Zone
+        </Typography>
+      </Box>
+
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="70vh"
       >
         <Card
           style={{
             margin: '0px',
-            width: '1140px',
-            height: '640px',
+            width: '1024px',
+            //height: '640px',
             boxShadow: '5px 10px 15px 10px #170a1c',
             padding: '6px',
           }}
@@ -106,11 +139,11 @@ const Learn = () => {
             >
               <Box display="flex" justifyContent="center" alignItems="center">
                 <Typography
-                  sx={{ textShadow: '10px 10px 10px #170a1c' }}
+                  sx={{ textShadow: '10px 10px 10px #170a1c', mb: '15px' }}
                   color="primary"
-                  variant="h2"
+                  variant="h4"
                 >
-                  Learn
+                  {currentPage.title}
                 </Typography>
               </Box>
 
@@ -133,16 +166,42 @@ const Learn = () => {
                   }}
                   image={currentPage.image}
                 />
+              </Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  mb: '10px',
+                }}
+              >
                 <Button
                   sx={{
-                    width: '50%',
+                    width: '25%',
                     mt: '70px',
+                    fontWeight: 'bold',
+                  }}
+                  color="secondary"
+                  variant="contained"
+                  onClick={prevPage}
+                >
+                  <Typography variant="subtitle">
+                    {currentPage.textButton1}
+                  </Typography>
+                </Button>
+                <Button
+                  sx={{
+                    width: '25%',
+                    mt: '70px',
+                    fontWeight: 'bold',
                   }}
                   color="secondary"
                   variant="contained"
                   onClick={nextPage}
                 >
-                  <Typography variant="h5">{currentPage.buttonText}</Typography>
+                  <Typography variant="text">
+                    {currentPage.textButton2}
+                  </Typography>
                 </Button>
               </Box>
             </Box>

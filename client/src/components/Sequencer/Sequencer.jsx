@@ -63,7 +63,7 @@ const Sequencer = props => {
   const [username, setUsername] = useState('')
   const [layerName, setLayerName] = useState('')
   const [instrument, setInstrument] = useState('beep')
-  const [volume, setVolume] = useState(-25)
+  const [volume, setVolume] = useState(-5)
   const [imgUrl, setImgUrl] = useState()
 
   const [open, setOpen] = React.useState(false)
@@ -71,18 +71,6 @@ const Sequencer = props => {
   const handleClose = () => setOpen(false)
 
   const notes = [
-    'B5',
-    'A#5',
-    'A5',
-    'G#5',
-    'G5',
-    'F#5',
-    'F5',
-    'E5',
-    'D#5',
-    'D5',
-    'C#5',
-    'C5',
     'B4',
     'A#4',
     'A4',
@@ -95,6 +83,18 @@ const Sequencer = props => {
     'D4',
     'C#4',
     'C4',
+    'B3',
+    'A#3',
+    'A3',
+    'G#3',
+    'G3',
+    'F#3',
+    'F3',
+    'E3',
+    'D#3',
+    'D3',
+    'C#3',
+    'C3',
   ]
 
   useEffect(() => {
@@ -164,7 +164,7 @@ const Sequencer = props => {
       let scale = Scale.get((rootNote + ' ' + scaleType).toLowerCase()).notes
       scale = scale.map(note => TonalNote.simplify(note))
       console.log(scale)
-      let opacity = 0.7
+      let opacity = 0.3
       if (
         scale.indexOf(note) > -1 ||
         scale.indexOf(TonalNote.enharmonic(note)) > -1
@@ -583,8 +583,8 @@ const Sequencer = props => {
               aria-label="Volume"
               value={volume}
               onChange={e => setVolume(e.target.value)}
-              min={-40}
-              max={-20}
+              min={-20}
+              max={0}
             />
             <VolumeUp />
           </Stack>
